@@ -1,0 +1,21 @@
+blog
+login - can post, comment
+anonymous, without login only view
+community blog
+
+sharing experiences
+functionality to 
+
+REQUIREMENTS
+user registration
+--storing activity
+--profile picture, name, class year, description
+--last commented on, last viewed
+--purpose, recreate 'Ever Better Memes', 'Overheard at Rochester'
+
+EXPECTATIONS
+--email confirmation
+--password reset--multi-user interaction
+--multi-factor authentication (duo authentication - email text to phone)
+--push notifications (give them an option for email, text)
+--RESTful APi to GET, POST, PUT, DELETE data
