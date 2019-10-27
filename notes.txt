@@ -18,4 +18,4 @@ EXPECTATIONS
 --password reset--multi-user interaction
 --multi-factor authentication (duo authentication - email text to phone)
 --push notifications (give them an option for email, text)
---RESTful APi to GET, POST, PUT, DELETE data
+--RESTful API to GET, POST, PUT, DELETE data
