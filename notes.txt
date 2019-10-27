@@ -13,21 +13,13 @@ user registration
 --last commented on, last viewed
 --purpose, recreate 'Ever Better Memes', 'Overheard at Rochester'
 
-<<<<<<< HEAD
+
+==============================================================================================
 An outline of the ways your project will go beyond the minimum requirements.
 -- The user will get an email confirmation. 
 -- If the users forget their password they will be able to reset it. 
--- Users can add comments on each other blog posts and the application shows when the 	         	  post/ comment was created. 
---The program will have the duo authentication. A text will be send to the phone or email 
-	to login to their account. 
+-- Users can add comments on each other blog posts and the application shows when the post/ comment was created. 	     
+--The program will have the duo authentication. A text will be send to the phone or email to login to their account. 
 --Users will be sent push notifications when they a comment has been made to the post
 --RESTful API to GET, POST, PUT, DELETE data
 
-=======
-EXPECTATIONS
---email confirmation
---password reset--multi-user interaction
---multi-factor authentication (duo authentication - email text to phone)
---push notifications (give them an option for email, text)
---RESTful API to GET, POST, PUT, DELETE data
->>>>>>> 253154257d6819cfa2ad47ba3e11e671646d7fb3
