@@ -1,0 +1,31 @@
+Tutorial for getting and pushing changes to GitHub repository
+Helpful links:
+1. GitHub cheatsheet: https://github.github.com/training-kit/downloads/github-git-cheat-sheet.pdf 
+2. Branches: https://github.com/Kunena/Kunena-Forum/wiki/Create-a-new-branch-with-git-and-manage-branches
+
+Recommended: 
+If you have a Windows computer (like me lol), it's way easier to use git bash which is just a better version of the Windows terminal. You can find it and install it from here: https://gitforwindows.org/. It's perfectly fine to keep using your terminal though! 
+
+Basics:
+Before you start working on pushing you changes, make sure to pull any changes that may have recently been made!
+$ git pull
+$ git add . 
+$ git commit -m "commit message: concise description of changes made"
+$ git push origin master
+
+Branches:
+You made a change in the code and want to push changes to the repository for the team to see. 
+Typically, the changes you make should be made in 'branches' so it doesn't interfere with code that other people may have worked on and pushed to the repository.
+
+$ git checkout -b branch-name
+$ git add . 
+$ git commit -m "commit message: concise description of changes made"
+$ git push origin branch-name
+
+You can view all branches by using 
+$ git branch -a
+
+You can check activity on the repository by typing
+$ git status
+
+Let me know if you run into problems! <3 
