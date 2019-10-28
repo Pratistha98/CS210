@@ -23,3 +23,22 @@ An outline of the ways your project will go beyond the minimum requirements.
 --Users will be sent push notifications when they a comment has been made to the post
 --RESTful API to GET, POST, PUT, DELETE data
 
+==============================================================================================
+How our project will make appropriate use of the provided technologies.
+--HTML and CSS:
+	HTML will be used to render the entirety of the project. Some examples of instances where HTML will be used include the login page, the home page, the password reset page and so on. CSS will be used to style all these pages so they follow a common theme.
+
+--Python-Flask:
+	Flask is going to be used to manage the entire backend operations of the project. Examples include handling routes, connecting to database, user authentication, form validation, etc.
+
+--Jinga2 Templates:
+	Our website is going to have some dynamic pages, for example the profile page for every user. Jinga2 Templates(combined with Flask) is going to be used to serve and render these dynamic pages.
+
+--WTForms:
+	Since we are developing a forum style website, it entails that every user can post stuff to the website, which will require forms. Furthermore, login page and signup page also require forms. This is where we will be using WTForms.
+
+--Flask-SQLAlchemy:
+	Again, since our website is forum styled, it heavily depends on the interaction with a database. We will be using the object relational mapper feature in Flask-SQLAlchemy to interact with the database using python objects which will greatly simplify our work.
+
+--Flask-Login:
+	Flask-Login will be used to log users in, log them out, as well as manage their session while they are logged in.
