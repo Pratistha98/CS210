@@ -31,7 +31,7 @@ How our project will make appropriate use of the provided technologies.
 --Python-Flask:
 	Flask is going to be used to manage the entire backend operations of the project. Examples include handling routes, connecting to database, user authentication, form validation, etc.
 
---Jinga2 Templates:
+--Jinja2 Templates:
 	Our website is going to have some dynamic pages, for example the profile page for every user. Jinga2 Templates(combined with Flask) is going to be used to serve and render these dynamic pages.
 
 --WTForms:
