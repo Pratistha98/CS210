@@ -1,27 +1,9 @@
-blog
-login - can post, comment
-anonymous, without login only view
-community blog
-
-sharing experiences
-functionality to 
-
-REQUIREMENTS
-user registration
---storing activity
---profile picture, name, class year, description
---last commented on, last viewed
---purpose, recreate 'Ever Better Memes', 'Overheard at Rochester'
-
-
 ==============================================================================================
-An outline of the ways your project will go beyond the minimum requirements.
--- The user will get an email confirmation. 
--- If the users forget their password they will be able to reset it. 
--- Users can add comments on each other blog posts and the application shows when the post/ comment was created. 	     
---The program will have the duo authentication. A text will be send to the phone or email to login to their account. 
---Users will be sent push notifications when they a comment has been made to the post
---RESTful API to GET, POST, PUT, DELETE data
+Applications functionality and motivation
+
+Our project goal is to make a community blog and forum where users can post material and view, react to and comment on other posts. This forum will particularly cater to current students at University of Rochester, alumni and students looking to apply to the school. It will essentially be a website improvisation of the Facebook groups: 'Overheard at Rochester', 'Ever Better Memes for Meliora Teens', 'UR Poll Party', etc. The main motivation for the idea was to have an online community for which one doesn't necessarily need an account on a different social media platform. Users will be able to create their own login exclusive to this website, and non-users are allowed to view content (without permission to comment, react or post). In this way, UR students can share collective experiences and personal accounts of incidents. This website can potentially provide a place for humor, publicity, awareness, and general FAQs for students affiliated (current, past or potential) with UR. The blog or forum will also have posts ordered by date, and each user can view 'last posted' or 'last commented on'. In addition, we are aiming to be able to send users notifications (via text, email or both) on their posts and account. To incorporate different genres of discussion, we will also have tabs on the menu for the user to navigate to their choice of topic. 
+
+Lastly, users will be able to build their own profiles. Not only will they have a username and password, they will also be able to upload a profile photo, set their public name, and display their class year with a 'status' or bio. 
 
 ==============================================================================================
 How our project will make appropriate use of the provided technologies.
@@ -42,3 +24,23 @@ How our project will make appropriate use of the provided technologies.
 
 --Flask-Login:
 	Flask-Login will be used to log users in, log them out, as well as manage their session while they are logged in.
+
+==============================================================================================
+An outline of the ways our project will go beyond the minimum requirements.
+-- The user will get an email confirmation. 
+-- If the users forget their password they will be able to reset it. 
+-- Users can add comments on each other blog posts and the application shows when the post/ comment was created. 	     
+--The program will have the duo authentication. A text will be send to the phone or email to login to their account. 
+--Users will be sent push notifications when they a comment has been made to the post
+--RESTful API to GET, POST, PUT, DELETE data
+
+==============================================================================================
+Division of work
+
+--Pratistha, Owen: front-end
+--Vishad, Muskaa: back-end
+--Evan: connecting the two
+
+==============================================================================================
+Github Link
+https://github.com/Pratistha98/CS210 (Private repository)
