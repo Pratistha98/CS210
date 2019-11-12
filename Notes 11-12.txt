@@ -1,0 +1,20 @@
+
+================================================================
+FRONT-END 
+
+Ideas for homepage:
+1. Transition bg photos
+2. Show most recent/most popular blog posts
+3. On clicking blog posts, will redirect to sign up/log in page
+4. Marquee photos on the top and blog posts when you scroll down
+
+TODO for login page
+1. Add button to redirect to sign up page if new user
+
+BACK-END
+
+TODO for Login page
+1. User authentication
+2. If you are a returning user, throw error on sign up page, redirect to login page
+3. If username is already taken, throw error
+4. Figure out how to has passwords
