@@ -1,0 +1,139 @@
+
+.body-landing {
+  background-image: url("images/Library.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+form {
+  text-align: center;
+}
+/* //-------------------------------// */
+
+
+.logo{
+  width: 150px;
+  padding-top: -0x;
+}
+
+.nav-link{padding-top:-100px;}
+
+.navbar{
+  font-family: 'Pacifico', cursive;
+	display: block;
+  font-size: 30px;
+}
+
+.navbar .navbar-nav a{color: rgb(9, 20, 119) !important;}
+
+.navbar .nav-link:hover{color:#e7b529 !important;}
+
+.overlay {
+  height: 100%;
+  width: 0;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background-color: rgba(241, 216, 100, 0.8);
+  overflow-x: hidden;
+  transition: 0.5s;
+}
+
+.overlay-content {
+  position: relative;
+  top: 25%;
+  width: 100%;
+  text-align: center;
+  margin-top: 30px;
+}
+
+.overlay a {
+  padding: 8px;
+  text-decoration: none;
+  color: white;
+  display: block;
+  transition: 0.3s;
+  font-family:'Muli', sans-serif;
+  display: block;
+  font-size: 40px;
+}
+
+.overlay a:hover, .overlay a:focus {color: #060886;}
+
+.overlay .closebtn {
+  position: absolute;
+  top: 20px;
+  right: 45px;
+  font-size: 60px;
+}
+
+.nav-icon{
+ font-size:30px;
+ cursor:pointer;
+ display: block;
+ text-align: right;
+}
+
+/**
+The following code is for the styling specific to the login page
+**/
+.body-login {
+  background-image: url("images/Campus.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.header-login-signup{
+  font-family: 'Pacifico', cursive;
+  display: block;
+  font-size: 30px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  color: rgb(9, 20, 119);
+}
+
+.center-block {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.jumbotron{
+    position: relative;
+    padding: 10px !important;
+    margin-top: 70px !important;
+    background-color: rgb(255, 255, 255, 0.8) !important;
+    *margin-top: 23px;
+    text-align: center;
+    margin-bottom: 0 !important;
+    width: 57%;
+    margin: 0 auto;
+}
+
+/**The following code is for the styling specific to the signup page**/
+.body-signup{
+  background-image: url("images/WilCo2.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
