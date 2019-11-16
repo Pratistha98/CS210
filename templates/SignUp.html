@@ -1,3 +1,4 @@
+{% import "bootstrap/wtf.html" as wtf %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -20,21 +21,22 @@
                 <div class="row justify-content-center align-items-center">
                     <form action ="/signup" method ="post">
                         <h1 class="header-login-signup" style="text-align: center">SIGN UP</h1>
+                        {{form.hidden_tag()}}
+                        {{form.csrf_token}}
                         <div class="form-group">
-                            {{form.email.label}}: {{form.email()}}    
+                            {{wtf.form_field(form.email)}}   
                             <!-- <input type="email" class="form-control" id="formGroupExampleInput" name ="email" placeholder="email"> -->
                         </div>
                         <div class="form-group">
-                            {{form.username.label}}: {{form.username()}}	
+                            {{wtf.form_field(form.username)}}	
                             <!-- <input type="text" class="form-control" id="formGroupExampleInput" name ="username" placeholder="username"> -->
                         </div>
                         <div class="form-group">
-                            {{form.password.label}}: {{form.password()}}	
+                            {{wtf.form_field(form.password)}}
                             <!-- <input type="password" class="form-control" id="formGroupExampleInput2" name = "password" placeholder="password"> -->
                         </div>
                         <div class="form-group">
-                            {{form.submit()}}
-                            <!-- <button class ="btn btn-light btn-block">Sign Up</button> -->
+                            <button class ="btn btn-light btn-block">Sign Up</button>
                         </div>
                         <p>Already have an account? Click <a href="http://localhost:5000/login"> here </a> to log in!</p>
                         <a href = "http://localhost:5000/">Go Back</a>	

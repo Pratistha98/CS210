@@ -1,3 +1,4 @@
+{% import "bootstrap/wtf.html" as wtf %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -19,18 +20,19 @@
             <div class="jumbotron">
                 <div class="row justify-content-center align-items-center">
                     <form action="/login" method ="Post">
-                        <h1 class="header-login-signup" style="text-align: center">LOGIN</h1>    
-                        <div class="form-group">	
-                            {{form.username.label}}: {{form.username()}}
+                        <h1 class="header-login-signup" style="text-align: center">LOGIN</h1>
+                        {{form.hidden_tag()}}
+                        {{ form.csrf_token }}    
+                        <div class="form-group">
+                            {{wtf.form_field(form.username)}}
                             <!-- <input type="text" class="form-control" id="formGroupExampleInput" name ="email" placeholder="email"> -->
                         </div>
                         <div class="form-group">
-                            {{form.password.label}}: {{form.password()}}	
+                            {{wtf.form_field(form.password)}}	
                             <!-- <input type="password" class="form-control" id="formGroupExampleInput2" name = "password" placeholder="Password"> -->
                         </div>
                         <div class="form-group">
-                            {{form.submit()}}
-                            <!-- <button class="btn btn-light btn-block" style="text-align: center;">Login</button> -->
+                            <button class="btn btn-light btn-block" style="text-align: center;">Login</button>
                         </div>
                         <p>Don't have an account? Click <a href="http://localhost:5000/signup"> here </a> to create one!</p>
                         <a href = "http://localhost:5000/">Go Back</a>	
