@@ -1,7 +1,7 @@
 from flask import Flask, render_template, url_for, redirect
 from flask_bootstrap import Bootstrap
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField
 from wtforms.validators import InputRequired, Email, Length
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -10,8 +10,7 @@ import os
 appdir = os.path.abspath(os.path.dirname(__file__))
 app = Flask(__name__)
 app.config['SECRET_KEY'] = "TvX<Z`%zPzNvt3M:Z]tE7dF*S}5o<pX$1@S6UvRy"
-app.config["SQLALCHEMY_DATABASE_URI"] = \
-    "sqlite:///{os.path.join(appdir, 'library.db')}"
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///database.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 Bootstrap(app)
 db = SQLAlchemy(app)
@@ -20,8 +19,8 @@ db = SQLAlchemy(app)
 class User(db.Model):
     __tablename__ = "Users"
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    username = db.Column(db.String(15), unique=True)
-    email = db.Column(db.String(50), unique=True)
+    username = db.Column(db.String(15), unique=True, nullable = False)
+    email = db.Column(db.String(50), unique=True, nullable = False)
     password = db.Column(db.String(128))
 
 
@@ -29,12 +28,14 @@ class LoginForm(FlaskForm):
     username = StringField("Username", validators=[InputRequired(), Length(min=5, max=15)])
     password = PasswordField("Password", validators=[InputRequired(), Length(min=8, max=128)])
     remember = BooleanField("Remember Me")
+    submit = SubmitField("Submit")
 
 
 class SignupForm(FlaskForm):
     email = StringField("Email", validators=[InputRequired(), Email(message='Invalid Email'), Length(max=50)])
     username = StringField("Username", validators=[InputRequired(), Length(min=5, max=15)])
     password = PasswordField("Password", validators=[InputRequired(), Length(min=8, max=128)])
+    submit = SubmitField("Submit")
     # Muskaan : re-enter password function?
 
 

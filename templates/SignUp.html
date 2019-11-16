@@ -20,17 +20,21 @@
                 <div class="row justify-content-center align-items-center">
                     <form action ="/signup" method ="post">
                         <h1 class="header-login-signup" style="text-align: center">SIGN UP</h1>
-                        <div class="form-group">    
-                            <input type="email" class="form-control" id="formGroupExampleInput" name ="email" placeholder="email">
-                        </div>
-                        <div class="form-group">	
-                            <input type="text" class="form-control" id="formGroupExampleInput" name ="username" placeholder="username">
-                        </div>
-                        <div class="form-group">	
-                            <input type="password" class="form-control" id="formGroupExampleInput2" name = "password" placeholder="password">
+                        <div class="form-group">
+                            {{form.email.label}}: {{form.email()}}    
+                            <!-- <input type="email" class="form-control" id="formGroupExampleInput" name ="email" placeholder="email"> -->
                         </div>
                         <div class="form-group">
-                            <button class ="btn btn-light btn-block">Sign Up</button>
+                            {{form.username.label}}: {{form.username()}}	
+                            <!-- <input type="text" class="form-control" id="formGroupExampleInput" name ="username" placeholder="username"> -->
+                        </div>
+                        <div class="form-group">
+                            {{form.password.label}}: {{form.password()}}	
+                            <!-- <input type="password" class="form-control" id="formGroupExampleInput2" name = "password" placeholder="password"> -->
+                        </div>
+                        <div class="form-group">
+                            {{form.submit()}}
+                            <!-- <button class ="btn btn-light btn-block">Sign Up</button> -->
                         </div>
                         <p>Already have an account? Click <a href="http://localhost:5000/login"> here </a> to log in!</p>
                         <a href = "http://localhost:5000/">Go Back</a>	
