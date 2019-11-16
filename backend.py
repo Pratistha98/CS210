@@ -11,7 +11,7 @@ appdir = os.path.abspath(os.path.dirname(__file__))
 app = Flask(__name__)
 app.config['SECRET_KEY'] = "TvX<Z`%zPzNvt3M:Z]tE7dF*S}5o<pX$1@S6UvRy"
 app.config["SQLALCHEMY_DATABASE_URI"] = \
-    f"sqlite:///{os.path.join(appdir, 'library.db')}"
+    "sqlite:///{os.path.join(appdir, 'library.db')}"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 Bootstrap(app)
 db = SQLAlchemy(app)
@@ -35,13 +35,18 @@ class SignupForm(FlaskForm):
     email = StringField("Email", validators=[InputRequired(), Email(message='Invalid Email'), Length(max=50)])
     username = StringField("Username", validators=[InputRequired(), Length(min=5, max=15)])
     password = PasswordField("Password", validators=[InputRequired(), Length(min=8, max=128)])
+    # Muskaan : re-enter password function?
 
 
 @app.route('/')
 def home():
-    return render_template("home.html")  # Update with proper html file
+    return render_template("Landing.html")  # Update with proper html file
 
-
+'''
+End-points
+1. def login()
+2. def signup()
+'''
 @app.route('/login', methods=['GET', 'POST'])  # Check if this works properly
 def login():
     form = LoginForm()
@@ -51,7 +56,7 @@ def login():
             if check_password_hash(user.password, form.password.data):
                 return redirect(url_for('posts'))  # make sure redirect is correct
         return "<h1>Invalid Username or Password</h1>"
-    return render_template("login.html", form=form)  # Update with proper html file
+    return render_template("Login.html", form=form)  # Update with proper html file
 
 
 @app.route('/signup', methods=['GET', 'POST'])  # check if this works properly
@@ -69,7 +74,14 @@ def signup():
         db.session.add(new_user)
         db.session.commit()
         return redirect(url_for(''))  # make sure this redirects to the home page
-    return render_template("signup.html", form=form)  # Update with proper html file
+    return render_template("SignUp.html", form=form)  # Update with proper html file
+
+
+@app.route("/logout")
+def logout():
+    logout_user()
+    flash("You have been logged out")
+    return redirect(url_for("login"))
 
 
 """!!!IDEA: annons can view first page of posts (clicking on a post still 
@@ -83,6 +95,22 @@ def signup():
    but there is a login form in focus in the middle if a user clicks on an
    individual post or page 2 of /posts!!!"""
 
+'''
+Add user to the database
+'''
+class UserExists(ValueError):
+    pass
+def register_user(email, password):
+    try:
+        conn = sqlite3.connect(db_path)
+        c = conn.cursor()
+        c.execute(("INSERT INTO Users (email, password) "
+                    "VALUES (?,?)"), (email, hash_password(password)))
+        uid = c.lastrowid
+        conn.commit()
+        return uid
+    except sqlite3.IntegrityError:
+        raise UserExists()
 
 @app.route("/posts")
 def posts():
@@ -95,4 +123,4 @@ def view_post(pid):
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True, host='localhost', port=5000)
