@@ -33,9 +33,9 @@
         <div class ="container">
             <div class="jumbotron">
                 <div class="row justify-content-center align-items-center">
-                        <h1 class="header-login-signup" style="text-align: center">YOU ARE LOGGED IN</h1>  
-                     
+                        <h1 class="header-login-signup" style="text-align: center">YOU ARE LOGGED IN</h1>                   
                 </div>
+                <div> <text> User: {{ username }} </text> </div>
                 <div> <a href = "{{ url_for('home') }}">Go Back</a></div>
                 <div> <a href="{{ url_for('logout') }}">Logout</a></div>
             </div>

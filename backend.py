@@ -10,7 +10,6 @@ import sqlite3
 import base64
 from flask_login import current_user, login_user, logout_user
 from flask_login import LoginManager, UserMixin
-#from app.models import User
 
 
 appdir = os.path.abspath(os.path.dirname(__file__))
@@ -49,15 +48,11 @@ class SignupForm(FlaskForm):
 def home():
     return render_template("Landing.html")  # Update with proper html file
 
-'''
-End-points
-1. def login()
-2. def signup()
-'''
 @app.route('/login', methods=['GET', 'POST'])  # Check if this works properly
-def login():
+def login():    
     if current_user.is_authenticated:
-        return render_template("LoggedIn.html")
+        username = current_user.username
+        return render_template("LoggedIn.html", username = username)
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
