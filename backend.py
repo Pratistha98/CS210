@@ -8,6 +8,9 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import os
 import sqlite3
 import base64
+from flask_login import current_user, login_user
+from flask_login import LoginManager
+#from app.models import User
 
 
 appdir = os.path.abspath(os.path.dirname(__file__))
@@ -17,6 +20,7 @@ app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///database.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 Bootstrap(app)
 db = SQLAlchemy(app)
+login = LoginManager(app)
 
 class User(db.Model):
     __tablename__ = "Users"
@@ -51,6 +55,8 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
+        if current_user.is_authenticated:
+            return ("logged in")
         if user:
             if check_password_hash(user.password, form.password.data):
                 #flash(u'Invalid password provided', 'error')
@@ -74,7 +80,7 @@ def signup():
         new_user = User(username=form.username.data, email=form.email.data, password=hashed_password)
         db.session.add(new_user)
         db.session.commit()
-        return (Redirect(url_for('login')))  # make sure this redirects to the home page
+        return (redirect(url_for('login')))  # make sure this redirects to the home page
     return render_template("SignUp.html", form=form)  # Update with proper html file
 
 @app.route("/private", methods=["GET"])
