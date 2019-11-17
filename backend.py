@@ -1,4 +1,4 @@
-from flask import Flask, render_template, url_for, redirect, flash
+from flask import Flask, render_template, url_for, redirect, flash, request
 from flask_bootstrap import Bootstrap
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField
@@ -8,7 +8,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import os
 import sqlite3
 import base64
-from flask_login import current_user, login_user
+from flask_login import current_user, login_user, logout_user
 from flask_login import LoginManager, UserMixin
 #from app.models import User
 
@@ -61,9 +61,11 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
+        if user is None or not check_password_hash(user.password, form.password.data):
+            flash('Invalid username or password')
+            return redirect(url_for('login'))
         if user:
             if check_password_hash(user.password, form.password.data):
-                #flash('You were successfully logged in')
                 login_user(user)
                 return (redirect(url_for('home')))  # make sure redirect is correct
         #error = 'Invalid credentials'
@@ -77,9 +79,11 @@ def signup():
         username = User.query.filter_by(username=form.username.data).first()  # make sure this checks for duplicate usernames
         email = User.query.filter_by(email=form.email.data).first()  # make sure this checks for existing users properly
         if username:
-            return "<h1>Username Already Taken</h1>"
+            flash('Username Already Taken')
+            return (redirect(url_for('signup')))
         if email:
-            return "<h1>Email Already Taken</h1>"
+            flash('Email already taken')
+            return (redirect(url_for('signup')))
         hashed_password = generate_password_hash(form.password.data, method='pbkdf2:sha512:10000', salt_length=8)
         new_user = User(username=form.username.data, email=form.email.data, password=hashed_password)
         db.session.add(new_user)
@@ -87,21 +91,10 @@ def signup():
         return (redirect(url_for('login')))  # make sure this redirects to the home page
     return render_template("SignUp.html", form=form)  # Update with proper html file
 
-@app.route("/private", methods=["GET"])
-def private():
-    if not validate_login():
-        flash("You must be logged in to access that page")
-        return redirect(url_for("login"))
-    else:
-        return redirect(url_for("login"))
-
-
-
-@app.route("/logout")
+@app.route('/logout')
 def logout():
     logout_user()
-    flash("You have been logged out")
-    return redirect(url_for("login"))
+    return redirect(url_for('login'))
 
 
 """!!!IDEA: annons can view first page of posts (clicking on a post still 
