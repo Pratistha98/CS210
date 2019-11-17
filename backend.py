@@ -36,7 +36,7 @@ class User(db.Model, UserMixin):
 class LoginForm(FlaskForm):
     username = StringField("Username", validators=[InputRequired(), Length(min=5, max=15)])
     password = PasswordField("Password", validators=[InputRequired(), Length(min=8, max=128)])
-    remember = BooleanField("Remember Me")
+    remember_me = BooleanField("Remember Me")
 
 
 class SignupForm(FlaskForm):
@@ -66,7 +66,7 @@ def login():
             return redirect(url_for('login'))
         if user:
             if check_password_hash(user.password, form.password.data):
-                login_user(user)
+                login_user(user, remember=form.remember_me.data)
                 return (redirect(url_for('home')))  # make sure redirect is correct
         #error = 'Invalid credentials'
     return render_template("Login.html", form=form)  # Update with proper html file
