@@ -9,7 +9,7 @@ import os
 import sqlite3
 import base64
 from flask_login import current_user, login_user
-from flask_login import LoginManager
+from flask_login import LoginManager, UserMixin
 #from app.models import User
 
 
@@ -22,7 +22,11 @@ Bootstrap(app)
 db = SQLAlchemy(app)
 login = LoginManager(app)
 
-class User(db.Model):
+@login.user_loader
+def load_user(id):
+    return User.query.get(int(id))
+
+class User(db.Model, UserMixin):
     __tablename__ = "Users"
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     username = db.Column(db.String(15), unique=True, nullable = False)
@@ -52,15 +56,15 @@ End-points
 '''
 @app.route('/login', methods=['GET', 'POST'])  # Check if this works properly
 def login():
+    if current_user.is_authenticated:
+        return render_template("LoggedIn.html")
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
-        if current_user.is_authenticated:
-            return ("logged in")
         if user:
             if check_password_hash(user.password, form.password.data):
-                #flash(u'Invalid password provided', 'error')
                 #flash('You were successfully logged in')
+                login_user(user)
                 return (redirect(url_for('home')))  # make sure redirect is correct
         #error = 'Invalid credentials'
     return render_template("Login.html", form=form)  # Update with proper html file
