@@ -1,4 +1,4 @@
-from flask import Flask, render_template, url_for, redirect
+from flask import Flask, render_template, url_for, redirect, flash
 from flask_bootstrap import Bootstrap
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField
@@ -6,6 +6,9 @@ from wtforms.validators import InputRequired, Email, Length
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
+import sqlite3
+import base64
+
 
 appdir = os.path.abspath(os.path.dirname(__file__))
 app = Flask(__name__)
@@ -50,8 +53,10 @@ def login():
         user = User.query.filter_by(username=form.username.data).first()
         if user:
             if check_password_hash(user.password, form.password.data):
-                return "<h1>Logged In</h1>"  # make sure redirect is correct
-        return "<h1>Invalid Username or Password</h1>"
+                #flash(u'Invalid password provided', 'error')
+                #flash('You were successfully logged in')
+                return (redirect(url_for('home')))  # make sure redirect is correct
+        #error = 'Invalid credentials'
     return render_template("Login.html", form=form)  # Update with proper html file
 
 
@@ -69,8 +74,17 @@ def signup():
         new_user = User(username=form.username.data, email=form.email.data, password=hashed_password)
         db.session.add(new_user)
         db.session.commit()
-        return "<h1>Account Created</h1>"  # make sure this redirects to the home page
+        return (Redirect(url_for('login')))  # make sure this redirects to the home page
     return render_template("SignUp.html", form=form)  # Update with proper html file
+
+@app.route("/private", methods=["GET"])
+def private():
+    if not validate_login():
+        flash("You must be logged in to access that page")
+        return redirect(url_for("login"))
+    else:
+        return redirect(url_for("login"))
+
 
 
 @app.route("/logout")
