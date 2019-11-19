@@ -1,3 +1,91 @@
+/* ANIMATION FOR UR BLOG */
+@import url(https://fonts.googleapis.com/css?family=Montserrat);
+
+html, body{
+  height: 80%;
+  font-weight: 100;
+}
+
+body{
+  background: #030321;
+  font-family: Arial;
+}
+
+svg {
+    display: block;
+    font: 10.5em 'Montserrat';
+    height: 300px;
+    margin: 0 auto;
+}
+
+.text-copy {
+    fill: none;
+    stroke: white;
+    stroke-dasharray: 6% 29%;
+    stroke-width: 5px;
+    stroke-dashoffset: 0%;
+    animation: stroke-offset 5.5s infinite linear;
+}
+
+.text-copy:nth-child(1){
+	stroke:rgb(9, 20, 119);
+	animation-delay: -1;
+}
+
+.text-copy:nth-child(2){
+	stroke: #e7b529;
+	animation-delay: -2s;
+}
+
+.text-copy:nth-child(3){
+	stroke:rgb(9, 20, 119);
+	animation-delay: -3s;
+}
+
+.text-copy:nth-child(4){
+	stroke: rgb(45, 55, 143);
+	animation-delay: -4s;
+}
+
+.text-copy:nth-child(5){
+	stroke: #e7b529;
+	animation-delay: -5s;
+}
+
+@keyframes stroke-offset{
+	100% {stroke-dashoffset: -35%;}
+}
+/**********************************/
+/* Hover animation for blogs  */
+.card-img {
+  width: 100%;
+  height: 100%;
+  background-color: black; /* fallback color */
+  /* background-position: center; */
+  background-size: cover;
+  transition:all 0.3s ease-in-out;
+  opacity:1;
+}
+.card:hover .card-img,
+.card:focus .card-img {
+  transform: scale(1.02);
+  opacity:0.5;
+}
+
+.card:hover .card-img-overlay{
+    color:#730d0d;
+}
+
+.card-img-overlay>h4, .card-img-overlay>p{
+    visibility:hidden;
+}
+
+.card-img-overlay:hover h4, .card-img-overlay:hover p{
+    visibility: visible;
+}
+/**********************************/
+
+/************* Slide show animation  ***********/
 .slideshow { 
   position: relative;
   height: 550px;
@@ -53,6 +141,7 @@
     opacity: 0
   }
 }
+/**********************************/
 .body-landing {
   background-image: url("/static/images/Library.jpg");
   background-repeat: no-repeat;
@@ -69,7 +158,7 @@ form {
   width: 150px;
   padding-top: -0x;
 }
-
+/************* Navigation bar animation  ***********/
 .nav-link{padding-top:-100px;}
 
 .navbar{
@@ -128,7 +217,7 @@ form {
  display: block;
  text-align: right;
 }
-
+/************************/
 /**
 The following code is for the styling specific to the login page
 **/
