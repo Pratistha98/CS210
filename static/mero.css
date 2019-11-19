@@ -1,6 +1,6 @@
 
 .body-landing {
-  background-image: url("images/Library.jpg");
+  background-image: url("/static/images/Library.jpg");
   background-repeat: no-repeat;
   background-size: cover;
 }
