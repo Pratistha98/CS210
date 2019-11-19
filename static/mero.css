@@ -1,3 +1,90 @@
+
+#new {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  margin: 0;
+  flex-direction: column;
+  flex-wrap: wrap;
+  font-family: 'Pacifico', cursive;
+  font-size: 50px;
+  display: block;
+  color: #05077a;
+}
+div[class*=box] {
+	height: 30%;
+	width: 100%; 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.box-1 { background-color: white; }
+
+
+.btn {
+	line-height: 100px;
+	height: 100px;
+	text-align: center;
+	width: 700px;
+  cursor: pointer;
+}
+
+/* 
+========================
+      BUTTON ONE
+========================
+*/
+.btn-one {
+	color: #000000;
+	transition: all 0.3s;
+	position: relative;
+}
+.btn-one span {
+	transition: all 0.3s;
+}
+.btn-one::before {
+	content: '';
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	z-index: 1;
+	opacity: 0;
+	transition: all 0.3s;
+	border-top-width: 1px;
+	border-bottom-width: 1px;
+	border-top-style: solid;
+	border-bottom-style: solid;
+	border-top-color: #e7b529;
+/* FOR BUTTONS */
+  border-bottom-color:#e7b529;
+	transform: scale(0.1, 1);
+}
+.btn-one:hover span {
+	letter-spacing: 2px;
+}
+.btn-one:hover::before {
+	opacity: 1;	
+	transform: scale(1, 1);	
+}
+.btn-one::after {
+	content: '';
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	z-index: 1;
+	transition: all 0.3s;
+	background-color: rgba(255,255,255,0.1);
+}
+.btn-one:hover::after {
+	opacity: 0;	
+	transform: scale(0.1, 1);
+}
+
 /* ANIMATION FOR UR BLOG */
 @import url(https://fonts.googleapis.com/css?family=Montserrat);
 
@@ -73,7 +160,7 @@ svg {
 }
 
 .card:hover .card-img-overlay{
-    color:#730d0d;
+    color:rgb(45, 55, 143);
 }
 
 .card-img-overlay>h4, .card-img-overlay>p{
