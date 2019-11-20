@@ -1,4 +1,4 @@
-
+/* The following code is for SHARE UR EXPERIENCE */
 #new {
   width: 100%;
   height: 100%;
@@ -29,12 +29,6 @@ div[class*=box] {
 	width: 700px;
   cursor: pointer;
 }
-
-/* 
-========================
-      BUTTON ONE
-========================
-*/
 .btn-one {
 	color: #000000;
 	transition: all 0.3s;
@@ -161,6 +155,9 @@ svg {
 
 .card:hover .card-img-overlay{
     color:rgb(45, 55, 143);
+    font-family: 'Pacifico', cursive;
+    font-size: 50px;
+    font-weight: 100;
 }
 
 .card-img-overlay>h4, .card-img-overlay>p{
@@ -169,6 +166,12 @@ svg {
 
 .card-img-overlay:hover h4, .card-img-overlay:hover p{
     visibility: visible;
+}
+/* fonts for the blogs */
+#text{
+  font-family: 'Acme', sans-serif;
+  font-size: 27px;
+  color: black;
 }
 /**********************************/
 
@@ -356,16 +359,21 @@ The following code is for the styling specific to the login page
 }
 #create{
   position: relative;
-  padding: 5px !important;
-  margin-top: 70px !important;
+  padding-top: 50px !important;
+  padding-bottom:225px;
+  margin-top: 7px !important;
   background-color: rgb(255, 255, 255, 0.8) !important;
-  *margin-top: 23px;
   text-align: center;
-  margin-bottom: 0 !important;
+  margin-bottom: 7px !important;
   width: 100%;
-  margin: 0 auto;
+  height:100%;
+  
 }
-
+#textarea {
+  width: 1000px;
+  height:30em;
+  }
+/********************************/
 
 
 
