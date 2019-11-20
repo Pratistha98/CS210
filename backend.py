@@ -91,6 +91,9 @@ def logout():
     logout_user()
     return redirect(url_for('login'))
 
+@app.route('/Create')
+def Create():
+    return render_template("Create.html")  # Create a new blog post 
 
 """!!!IDEA: annons can view first page of posts (clicking on a post still 
    forces you to login). When the user clicks to access the second+ page, 

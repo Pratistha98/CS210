@@ -347,10 +347,24 @@ The following code is for the styling specific to the login page
   background-repeat: no-repeat;
   background-size: cover;
 }
+/**The following code is for the styling specific to the Create blog post**/
 
-
-
-
+.body-create {
+  background-image: url("images/Library.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+#create{
+  position: relative;
+  padding: 5px !important;
+  margin-top: 70px !important;
+  background-color: rgb(255, 255, 255, 0.8) !important;
+  *margin-top: 23px;
+  text-align: center;
+  margin-bottom: 0 !important;
+  width: 100%;
+  margin: 0 auto;
+}
 
 
 
