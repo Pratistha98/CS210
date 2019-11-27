@@ -1,3 +1,15 @@
+/* The button to scroll up */
+#myBtn {
+  display: none; /* Hidden by default */
+  position: fixed; /* Fixed/sticky position */
+  bottom: 50px; /* Place the button at the bottom of the page */
+  right: 10px;
+  z-index: 99; /* Make sure it does not overlap */
+  border: none; /* Remove borders */
+  outline: none; /* Remove outline */
+  cursor: pointer; /* Add a mouse pointer on hover */
+  background-color: rgba(255,255,255,0);
+}
 /* The following code is for SHARE UR EXPERIENCE */
 #new {
   width: 100%;
@@ -374,18 +386,3 @@ The following code is for the styling specific to the login page
   height:30em;
   }
 /********************************/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
