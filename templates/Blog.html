@@ -1,0 +1,45 @@
+{%  extends "Header.html" %}
+{% block content %}
+<body>
+<div class= "container">
+	<div class="row">
+		<div class="col-md-12">
+			<div class="card">
+				<img class ="card-img-top" src="/static/images/Campus.jpg" >
+				<div class ="card-body">
+					<h4 class="text-right"> Like Button</h4> 
+                    <h4><a>Blog_Name</a></h4>
+                    <p>
+                            Submitted by: Name							
+                      </p>
+                    <p> Blog Description</p>
+                    <button type="button" class="btn btn-sm btn-warning"> Edit </button>
+                        <button type="button" class="btn btm-sm btn-danger">DELETE</button>				
+					</form>					
+					</div>					   
+				</div>			
+			<div class = "card card-body bg-light">
+				<div class="text-right">
+					<a class ="btn btn-success" href="#"> Add New comment</a>
+				</div>
+    			  <div class="row">
+					 <div class="col-md-9">
+					   <strong> comment username</strong>
+							 <p>
+								comment.text 
+                             </p>
+								<div class ="btn-toolbar" role= "toolbar"></div>
+								 <a class ="btn btn-sm btn-warning" href="#"> EDIT</a>
+								<button class="btn btn-sm btn-danger"> DELETE </button>
+                                 </form>
+						 </div>
+					  </div> 
+				</div>
+            </div>
+			</div>
+		</div>
+	</div>	
+</div>
+</body>
+</html>
+{% endblock %}

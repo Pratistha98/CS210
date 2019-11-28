@@ -1,3 +1,20 @@
+
+/* Fancy Buttons */
+#startBtn {
+  font-family: OpenSans;
+  color: #FFFFFF;
+  background-color: rgb(14, 63, 199);
+  border: 1px solid rgb(14, 63, 199);
+  border-radius: 5px;
+  box-shadow: 0px 5px 0px rgb(1, 36, 90);
+  position: relative;
+  top: 0px;
+  transition: all ease 0.3s;
+}
+#startBtn:active {
+  box-shadow: 0 3px 0 rgb(1, 36, 90);
+  top: 3px;
+}
 /* The button to scroll up */
 #myBtn {
   display: none; /* Hidden by default */
