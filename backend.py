@@ -11,9 +11,6 @@ from flask_login import LoginManager, UserMixin
 import os
 import sqlite3
 import base64
-<<<<<<< HEAD
-from flask_login import current_user, login_user, logout_user
-from flask_login import LoginManager, UserMixin
 from flask_migrate import Migrate
 from datetime import datetime
 
