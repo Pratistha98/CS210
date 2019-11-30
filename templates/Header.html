@@ -26,10 +26,16 @@
       </script>
     </button>
     <div class="collapse navbar-collapse " id="forDisplay">
-      <ul class="navbar-nav ml-auto">		
-    		<a class="nav-link" href="http://localhost:5000/">Home</a>
-    		<a class="nav-link" href="http://localhost:5000/login">Login</a> 
-    		<a class="nav-link" href="http://localhost:5000/signup">SignUp</a>	
+      <ul class="navbar-nav ml-auto">
+        {% if logged_in %}
+          <a class="nav-link" href="http://localhost:5000/">Home</a>
+          <a class="nav-link" href="http://localhost:5000/create">Post</a>
+          <a class="nav-link" href="http://localhost:5000/logout">Logout</a>
+        {% else %}
+          <a class="nav-link" href="http://localhost:5000/">Home</a>
+          <a class="nav-link" href="http://localhost:5000/login">Login</a> 
+          <a class="nav-link" href="http://localhost:5000/signup">SignUp</a>	
+        {% endif %}
       </ul>
     </div>
   </nav>
