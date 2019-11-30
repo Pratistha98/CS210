@@ -2,9 +2,9 @@ from flask import Flask, render_template, url_for, redirect, flash, request
 from flask_bootstrap import Bootstrap
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField
-from wtforms.validators import InputRequired, Email, Length
+from wtforms.validators import InputRequired, Email, Length, Required, EqualTo
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy_imageattach.entity import Image, image_attachment
+#from sqlalchemy_imageattach.entity import Image, image_attachment
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import current_user, login_user, logout_user
 from flask_login import LoginManager, UserMixin
@@ -37,16 +37,11 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(50), unique=True, nullable = False)
     password = db.Column(db.String(128))
 
-class Posts(db.Model):
-    __tablename__ = "Posts"
-    post_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    title = db.Column(db.String(200))
-    content = db.Column(db.Text)
-    post_owner = db.Column(db.Integer) #add foreign key, one to many relation from user to posts
 
 class LoginForm(FlaskForm):
     username = StringField("Username", validators=[InputRequired(), Length(min=5, max=15)])
     password = PasswordField("Password", validators=[InputRequired(), Length(min=8, max=128)])
+    password_again = PasswordField("Password again", validators=[Required(), EqualTo('password')])
     remember_me = BooleanField("Remember Me")
 
 class SignupForm(FlaskForm):
