@@ -2,51 +2,52 @@
 {%  extends "Header.html" %}
 {% block content %}
 
-<body class="body-login">
-    <div class="container">
-        <div class ="container">
-            <div class="jumbotron">
-                <div class="row justify-content-center align-items-center">
-                    <form action="/login" method ="Post">
-                        <h1 class="header-login-signup" style="text-align: center">LOGIN</h1>
-                            {% if error %}
-                                <p class=error><strong>Error:</strong> {{ error }}
-                            {% endif %}
-                            {% with messages = get_flashed_messages() %}
-                                {% if messages %}
-                                    <ul class=flashes>
-                                    {% for message in messages %}
-                                        <li>{{ message }}</li>
-                                    {% endfor %}
-                                    </ul>
+<html>
+    <body class="body-login">
+        <div class="container">
+            <div class ="container">
+                <div class="jumbotron">
+                    <div class="row justify-content-center align-items-center">
+                        <form action="/login" method ="Post">
+                            <h1 class="header-login-signup" style="text-align: center">LOGIN</h1>
+                                {% if error %}
+                                    <p class=error><strong>Error:</strong> {{ error }}
                                 {% endif %}
-                            {% endwith %}
+                                {% with messages = get_flashed_messages() %}
+                                    {% if messages %}
+                                        <ul class=flashes>
+                                        {% for message in messages %}
+                                            <li>{{ message }}</li>
+                                        {% endfor %}
+                                        </ul>
+                                    {% endif %}
+                                {% endwith %}
 
-                        {{form.hidden_tag()}}
-                        {{ form.csrf_token }}    
-                        <div class="form-group">
-                            {{wtf.form_field(form.username)}}
-                            <!-- <input type="text" class="form-control" id="formGroupExampleInput" name ="email" placeholder="email"> -->
-                        </div>
-                        <div class="form-group">
-                            {{wtf.form_field(form.password)}}	
-                            <!-- <input type="password" class="form-control" id="formGroupExampleInput2" name = "password" placeholder="Password"> -->
-                        </div>
-                        <div class="form-group">
-                            <button class="btn btn-light btn-block" style="text-align: center;">Login</button>
-                        </div>
-                        <div class = "form-group"> 
-                            {{form.remember_me}} Remember Me 
-                        </div>
-                        <p>Don't have an account? Click <a href="http://localhost:5000/signup"> here </a> to create one!</p>
-                        <a href = "http://localhost:5000/">Go Back</a>	
-                    </form>
+                            {{form.hidden_tag()}}
+                            {{ form.csrf_token }}    
+                            <div class="form-group">
+                                {{wtf.form_field(form.username)}}
+                                <!-- <input type="text" class="form-control" id="formGroupExampleInput" name ="email" placeholder="email"> -->
+                            </div>
+                            <div class="form-group">
+                                {{wtf.form_field(form.password)}}	
+                                <!-- <input type="password" class="form-control" id="formGroupExampleInput2" name = "password" placeholder="Password"> -->
+                            </div>
+                            <div class="form-group">
+                                <button class="btn btn-light btn-block" id = "startBtn" style="text-align: center;">Login</button>
+                            </div>
+                            <div class = "form-group"> 
+                                {{form.remember_me}} Remember Me 
+                            </div>
+                            <p>Don't have an account? Click <a href="http://localhost:5000/signup"> here </a> to create one!</p>
+                            <a href = "http://localhost:5000/">Go Back</a>	
+                        </form>
+                    </div>
                 </div>
             </div>
-        </div>
-                
-    </div>  
-</body>
+                    
+        </div>  
+    </body>
 </html>
 {% endblock %}
 

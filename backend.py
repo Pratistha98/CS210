@@ -4,14 +4,19 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField
 from wtforms.validators import InputRequired, Email, Length
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy_imageattach.entity import Image, image_attachment
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import current_user, login_user, logout_user
+from flask_login import LoginManager, UserMixin
 import os
 import sqlite3
 import base64
+<<<<<<< HEAD
 from flask_login import current_user, login_user, logout_user
 from flask_login import LoginManager, UserMixin
 from flask_migrate import Migrate
 from datetime import datetime
+
 
 
 appdir = os.path.abspath(os.path.dirname(__file__))
@@ -35,11 +40,17 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(50), unique=True, nullable = False)
     password = db.Column(db.String(128))
 
+class Posts(db.Model):
+    __tablename__ = "Posts"
+    post_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    title = db.Column(db.String(200))
+    content = db.Column(db.Text)
+    post_owner = db.Column(db.Integer) #add foreign key, one to many relation from user to posts
+
 class LoginForm(FlaskForm):
     username = StringField("Username", validators=[InputRequired(), Length(min=5, max=15)])
     password = PasswordField("Password", validators=[InputRequired(), Length(min=8, max=128)])
     remember_me = BooleanField("Remember Me")
-
 
 class SignupForm(FlaskForm):
     email = StringField("Email", validators=[InputRequired(), Email(message='Invalid Email'), Length(max=50)])
@@ -60,12 +71,29 @@ class Post(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     # TODO: image = db.Column
 
+
+class PostForm(FlaskForm):
+    title = StringField("Title", validators=[InputRequired(), Length(min=5, max=200)])
+    content = StringField("Content", validators=[InputRequired(), Length(min=5)])
+
+def checklogin():
+    if current_user.is_authenticated:
+        return True
+    else:
+        return False
+    
+
 @app.route('/')
 def home():
-    return render_template("Landing.html")  # Update with proper html file
+    # resets the database:
+    # db.drop_all()
+    # db.create_all()
+    # db.session.commit()
+    logged_in = checklogin()
+    return render_template("Landing.html", logged_in=logged_in)
 
 @app.route('/login', methods=['GET', 'POST'])  # Check if this works properly
-def login():    
+def login(): 
     if current_user.is_authenticated:
         username = current_user.username
         return render_template("LoggedIn.html", username = username)
@@ -80,10 +108,10 @@ def login():
                 login_user(user, remember=form.remember_me.data)
                 return (redirect(url_for('home')))  # make sure redirect is correct
         #error = 'Invalid credentials'
-    return render_template("Login.html", form=form)  # Update with proper html file
+    logged_in = checklogin()   
+    return render_template("Login.html", form=form, logged_in=logged_in)  # Update with proper html file
 
-
-@app.route('/signup', methods=['GET', 'POST'])  # check if this works properly
+@app.route('/signup', methods=['GET', 'POST'])
 def signup():
     form = SignupForm()
     if form.validate_on_submit():
@@ -100,12 +128,26 @@ def signup():
         db.session.add(new_user)
         db.session.commit()
         return (redirect(url_for('login')))  # make sure this redirects to the home page
-    return render_template("SignUp.html", form=form)  # Update with proper html file
+    logged_in = checklogin()   
+    return render_template("SignUp.html", form=form, logged_in=logged_in)  # Update with proper html file
+
+@app.route('/create', methods=['GET', 'POST'])
+def Create():
+    form = PostForm()
+    logged_in = checklogin()   
+    return render_template("Create.html", form=form, logged_in=logged_in)  # Create a new blog post 
+
+@app.route('/blog')
+def Blog():
+    logged_in = checklogin()   
+    return render_template("Blog.html", logged_in=logged_in)  # Open the blog post 
 
 @app.route('/logout')
 def logout():
     logout_user()
+    logged_in = False
     return redirect(url_for('login'))
+
 
 
 """!!!IDEA: annons can view first page of posts (clicking on a post still 
@@ -118,6 +160,7 @@ def logout():
 """!!!IDEA: use ajax to create an pop up where everything blurs in the background,
    but there is a login form in focus in the middle if a user clicks on an
    individual post or page 2 of /posts!!!"""
+
 
 '''
 Add user to the database
@@ -170,13 +213,22 @@ def posts():
     posts = session.query(Post).all()
     return render_template("posts.html")
 
-
 @app.route("/posts/<int:pid>")  # login required
 def view_post(pid):
     post = session.query(Post).filter_by(id=pid).one()
     return render_template("post.html", post=post)
 
 
-
 if __name__ == '__main__':
     app.run(debug=True, host='localhost', port=5000)
+
+"""!!!IDEA: annons can view first page of posts (clicking on a post still 
+   forces you to login). When the user clicks to access the second+ page, 
+   login will be required.
+   
+   *As of right now, we can leave it as login required and implement the 
+   rest later!!!"""
+
+"""!!!IDEA: use ajax to create an pop up where everything blurs in the background,
+   but there is a login form in focus in the middle if a user clicks on an
+   individual post or page 2 of /posts!!!"""
