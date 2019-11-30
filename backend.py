@@ -160,17 +160,6 @@ Add user to the database
 class UserExists(ValueError):
     pass
 
-def register_user(email, password):
-    try:
-        conn = sqlite3.connect(db_path)
-        c = conn.cursor()
-        c.execute(("INSERT INTO Users (email, password) "
-                    "VALUES (?,?)"), (email, hash_password(password)))
-        uid = c.lastrowid
-        conn.commit()
-        return uid
-    except sqlite3.IntegrityError:
-        raise UserExists()
 
 #--------------------------------------------------------------------------
 # Posts
@@ -194,8 +183,6 @@ def create():
         db.session.commit()
         conn = sqlite3.connect(db_path)
         c = conn.cursor()
-        c.execute(("INSERT INTO Posts (id, title, body, timestamp, username) "
-                    "VALUES (?,?,?,?,?)"), (id, title, body, timestamp, username))
         return render_template("Create.html")  # Create a new blog post
     flash('User not logged in')
     return redirect(url_for('login')) 
