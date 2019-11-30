@@ -10,6 +10,8 @@ import sqlite3
 import base64
 from flask_login import current_user, login_user, logout_user
 from flask_login import LoginManager, UserMixin
+from flask_migrate import Migrate
+from datetime import datetime
 
 
 appdir = os.path.abspath(os.path.dirname(__file__))
@@ -20,6 +22,7 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 Bootstrap(app)
 db = SQLAlchemy(app)
 login = LoginManager(app)
+migrate = Migrate(app, db)
 
 @login.user_loader
 def load_user(id):
@@ -43,6 +46,19 @@ class SignupForm(FlaskForm):
     username = StringField("Username", validators=[InputRequired(), Length(min=5, max=15)])
     password = PasswordField("Password", validators=[InputRequired(), Length(min=8, max=128)])
     # Muskaan : re-enter password function?
+
+class CreatePost(FlaskForm):
+    title = StringField("Email", validators=[InputRequired(), Email(message='Invalid Email'), Length(max=50)])
+    body = StringField("Username", validators=[InputRequired(), Length(min=5, max=15)])
+
+class Post(db.Model):
+    __tablename__ = "Posts"
+    id = db.Column(db.Integer, primary_key=True, nullable = False, autoincrement = True)
+    title = db.Column(db.String(45), nullable = False)
+    body = db.Column(db.String(140))
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    # TODO: image = db.Column
 
 @app.route('/')
 def home():
@@ -91,9 +107,6 @@ def logout():
     logout_user()
     return redirect(url_for('login'))
 
-@app.route('/Create')
-def Create():
-    return render_template("Create.html")  # Create a new blog post 
 
 """!!!IDEA: annons can view first page of posts (clicking on a post still 
    forces you to login). When the user clicks to access the second+ page, 
@@ -111,6 +124,7 @@ Add user to the database
 '''
 class UserExists(ValueError):
     pass
+
 def register_user(email, password):
     try:
         conn = sqlite3.connect(db_path)
@@ -123,14 +137,45 @@ def register_user(email, password):
     except sqlite3.IntegrityError:
         raise UserExists()
 
+#--------------------------------------------------------------------------
+# Posts
+'''
+id = db.Column(db.Integer, primary_key=True, nullable = False, autoincrement = True)
+    title = db.Column(db.String(45), nullable = False)
+    body = db.Column(db.String(140))
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    user_id
+'''
+@app.route('/posts/create', methods=['POST'])
+def create():
+    form = CreatePost()
+    if current_user.is_authenticated:
+        username = current_user.username
+        title = form.title.data
+        body = form.body.data
+            
+        new_post = Post(id=id, title=title, body=body, username=username)
+        db.session.add(new_post)
+        db.session.commit()
+        conn = sqlite3.connect(db_path)
+        c = conn.cursor()
+        c.execute(("INSERT INTO Posts (id, title, body, timestamp, username) "
+                    "VALUES (?,?,?,?,?)"), (id, title, body, timestamp, username))
+        return render_template("Create.html")  # Create a new blog post
+    flash('User not logged in')
+    return redirect(url_for('login')) 
+
 @app.route("/posts")
 def posts():
-    return
+    posts = session.query(Post).all()
+    return render_template("posts.html")
 
 
 @app.route("/posts/<int:pid>")  # login required
 def view_post(pid):
-    return
+    post = session.query(Post).filter_by(id=pid).one()
+    return render_template("post.html", post=post)
+
 
 
 if __name__ == '__main__':
