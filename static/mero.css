@@ -223,26 +223,26 @@ svg {
   background-repeat: no-repeat;
   opacity: 0;
   z-index: 0;
-  animation: imageAnimation 50s linear infinite; 
+  animation: imageAnimation 20s linear infinite; 
 }
 .slideshow li:nth-child(1) { 
   background-image: url(https://live.staticflickr.com/1131/4722280998_f4f55526e1_b.jpg) 
 }
 .slideshow li:nth-child(2) { 
   background-image: url(https://www.collegeconsensus.com/wp-content/uploads/2016/12/U-of-R-1024x532.jpg);
-  animation-delay: 10s; 
+  animation-delay: 5s; 
 }
 .slideshow li:nth-child(3) { 
-  background-image: url(http://www.rochester.edu/team/wp-content/uploads/2015/01/2013-01-04_Rush_Rhees_Library_sunset_035.jpg);
-  animation-delay: 20s; 
+  background-image: url(https://i.pinimg.com/originals/dd/09/97/dd09978e77bf0e1c1d4ed9d38dcab503.jpg);
+  animation-delay: 10s; 
 }
 .slideshow li:nth-child(4) { 
-  background-image: url(http://i.imgur.com/2LSMCmJ.jpg);
-  animation-delay: 30s; 
+  background-image: url(https://blogs.rochester.edu/thegreendandelion/wp-content/uploads/2018/02/about_picture_1-840x565.jpg);
+  animation-delay: 15s; 
 }
 .slideshow li:nth-child(5) { 
-  background-image: url(http://i.imgur.com/TVGe0Ef.jpg);
-  animation-delay: 40s; 
+  background-image: url(http://www.rochester.edu/team/wp-content/uploads/2015/01/2013-01-04_Rush_Rhees_Library_sunset_035.jpg);
+  animation-delay: 20s; 
 }
 @keyframes imageAnimation { 
   0% { 
