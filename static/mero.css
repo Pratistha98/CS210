@@ -401,5 +401,11 @@ The following code is for the styling specific to the login page
 #textarea {
   width: 1000px;
   height:30em;
+  text-align: top;
+  word-wrap: break-word;
+  }
+  .form-group{
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-weight: bold;
   }
 /********************************/

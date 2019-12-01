@@ -31,10 +31,12 @@
           <a class="nav-link" href="http://localhost:5000/">Home</a>
           <a class="nav-link" href="http://localhost:5000/create">Post</a>
           <a class="nav-link" href="http://localhost:5000/logout">Logout</a>
+          <a class="nav-link" href="#">About</a>
         {% else %}
           <a class="nav-link" href="http://localhost:5000/">Home</a>
           <a class="nav-link" href="http://localhost:5000/login">Login</a> 
           <a class="nav-link" href="http://localhost:5000/signup">SignUp</a>	
+          <a class="nav-link" href="#">About</a>
         {% endif %}
       </ul>
     </div>
@@ -42,9 +44,17 @@
 	<div id="myNav" class="overlay">
     <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
     <div class="overlay-content">
-      <a href="http://localhost:5000/">HOME</a>
-      <a href="http://localhost:5000/login">LOGIN</a>
-      <a href="http://localhost:5000/signup">SIGN UP</a>
+        {% if logged_in %}
+        <a class="nav-link" href="http://localhost:5000/">Home</a>
+        <a class="nav-link" href="http://localhost:5000/create">Post</a>
+        <a class="nav-link" href="http://localhost:5000/logout">Logout</a>
+        <a class="nav-link" href="#">Aboutt</a>
+      {% else %}
+        <a class="nav-link" href="http://localhost:5000/">Home</a>
+        <a class="nav-link" href="http://localhost:5000/login">Login</a> 
+        <a class="nav-link" href="http://localhost:5000/signup">SignUp</a>	
+        <a class="nav-link" href="#">About</a>
+      {% endif %}
     </div>
   </div>
 </head>
