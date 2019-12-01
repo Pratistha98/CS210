@@ -57,7 +57,7 @@ class Post(db.Model):
     title = db.Column(db.String(45), nullable = False)
     body = db.Column(db.String(140))
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('Users.id'))
  #   image = db.Column(db.Image)
     # TODO: image = db.Column
 
@@ -72,7 +72,6 @@ def checklogin():
     else:
         return False
     
-
 @app.route('/')
 def home():
     # resets the database:
