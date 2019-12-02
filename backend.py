@@ -137,6 +137,10 @@ def logout():
     logged_in = False
     return redirect(url_for('login'))
 
+@app.route('/profile') 
+def profile():
+      return render_template("Profile.html")
+
 
 
 """!!!IDEA: annons can view first page of posts (clicking on a post still 

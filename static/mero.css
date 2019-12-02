@@ -1,4 +1,21 @@
-
+/* For Profile.html*/
+.fit{
+  width: 100%;
+}
+.profile{
+  font-family: 'Pacifico', cursive;
+  display: block;
+  color: rgb(9, 20, 119);
+}
+.profile2{
+  font-family: 'Pacifico', cursive;
+  color: #e7b529;
+}
+.bio{
+  font-family: 'Muli', sans-serif;
+  font-size: 20px;
+  color: black;
+}
 /* Fancy Buttons */
 #startBtn {
   font-family: OpenSans;
