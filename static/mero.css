@@ -389,6 +389,9 @@ The following code is for the styling specific to the login page
     width: 57%;
     margin: 0 auto;
 }
+.form-group{
+  text-align:left !important; 
+}
 
 /**The following code is for the styling specific to the signup page**/
 .body-signup{
