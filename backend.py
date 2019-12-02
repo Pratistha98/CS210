@@ -4,7 +4,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField
 from wtforms.validators import InputRequired, Email, Length, Required, EqualTo
 from flask_sqlalchemy import SQLAlchemy
-#from sqlalchemy_imageattach.entity import Image, image_attachment
+# from sqlalchemy_imageattach.entity import Image, image_attachment
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import current_user, login_user, logout_user
 from flask_login import LoginManager, UserMixin
@@ -13,8 +13,6 @@ import sqlite3
 import base64
 from flask_migrate import Migrate
 from datetime import datetime
-
-
 
 appdir = os.path.abspath(os.path.dirname(__file__))
 app = Flask(__name__)
@@ -37,17 +35,16 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(50), unique=True, nullable = False)
     password = db.Column(db.String(128))
 
-
 class LoginForm(FlaskForm):
     username = StringField("Username", validators=[InputRequired(), Length(min=5, max=15)])
     password = PasswordField("Password", validators=[InputRequired(), Length(min=8, max=128)])
-    password_again = PasswordField("Password again", validators=[Required(), EqualTo('password')])
     remember_me = BooleanField("Remember Me")
 
 class SignupForm(FlaskForm):
     email = StringField("Email", validators=[InputRequired(), Email(message='Invalid Email'), Length(max=50)])
     username = StringField("Username", validators=[InputRequired(), Length(min=5, max=15)])
     password = PasswordField("Password", validators=[InputRequired(), Length(min=8, max=128)])
+    password_again = PasswordField("Password again", validators=[Required(), EqualTo('password')])
     # Muskaan : re-enter password function?
 
 class CreatePost(FlaskForm):
@@ -60,7 +57,8 @@ class Post(db.Model):
     title = db.Column(db.String(45), nullable = False)
     body = db.Column(db.String(140))
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('Users.id'))
+ #   image = db.Column(db.Image)
     # TODO: image = db.Column
 
 
@@ -74,7 +72,6 @@ def checklogin():
     else:
         return False
     
-
 @app.route('/')
 def home():
     # resets the database:
