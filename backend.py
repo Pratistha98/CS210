@@ -4,7 +4,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField
 from wtforms.validators import InputRequired, Email, Length, Required, EqualTo
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy_imageattach.entity import Image, image_attachment
+# from sqlalchemy_imageattach.entity import Image, image_attachment
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import current_user, login_user, logout_user
 from flask_login import LoginManager, UserMixin
@@ -124,7 +124,7 @@ def signup():
 def Creation():
     form = PostForm()
     logged_in = checklogin()   
-    return render_template("Create.html", form=form, logged_in=logged_in)  # Create a new blog post 
+    return render_template("Create.html", logged_in=logged_in)  # Create a new blog post 
 
 @app.route('/blog')
 def Blog():
