@@ -127,7 +127,7 @@ def signup():
 def Create():
     form = PostForm()
     logged_in = checklogin()   
-    return render_template("Create.html", form=form, logged_in=logged_in)  # Create a new blog post 
+    return render_template("Create.html", logged_in=logged_in)  # Create a new blog post 
 
 @app.route('/blog')
 def Blog():
