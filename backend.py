@@ -53,12 +53,12 @@ class CreatePost(FlaskForm):
 
 class Post(db.Model):
     __tablename__ = "Posts"
-    id = db.Column(db.Integer, primary_key=True, nullable = False, autoincrement = True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement = True)
     title = db.Column(db.String(45), nullable = False)
     body = db.Column(db.String(140))
-    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
-    user_id = db.Column(db.Integer, db.ForeignKey('Users.id'))
- #   image = db.Column(db.Image)
+    #timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    #user_id = db.Column(db.Integer, db.ForeignKey('Users.id'))
+    # image = db.Column(db.Image)
     # TODO: image = db.Column
 
 
@@ -120,8 +120,8 @@ def signup():
     logged_in = checklogin()   
     return render_template("SignUp.html", form=form, logged_in=logged_in)  # Update with proper html file
 
-@app.route('/create', methods=['GET', 'POST'])
-def Create():
+@app.route('/Creation', methods=['GET', 'POST'])
+def Creation():
     form = PostForm()
     logged_in = checklogin()   
     return render_template("Create.html", form=form, logged_in=logged_in)  # Create a new blog post 
@@ -167,22 +167,22 @@ id = db.Column(db.Integer, primary_key=True, nullable = False, autoincrement = T
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     user_id
 '''
-@app.route('/posts/create', methods=['POST'])
+@app.route('/create', methods=['GET', 'POST'])
 def create():
     form = CreatePost()
-    if current_user.is_authenticated:
-        username = current_user.username
-        title = form.title.data
-        body = form.body.data
-            
-        new_post = Post(id=id, title=title, body=body, username=username)
-        db.session.add(new_post)
-        db.session.commit()
-        conn = sqlite3.connect(db_path)
-        c = conn.cursor()
-        return render_template("Create.html")  # Create a new blog post
-    flash('User not logged in')
-    return redirect(url_for('login')) 
+    logged_in = checklogin() 
+    if request.method == 'GET':
+        return render_template("Create.html", form = form, logged_in = logged_in)
+    elif request.method == 'POST':
+        if current_user.is_authenticated:        
+            new_post = Post(title=form.title.data, body=form.body.data)
+            db.session.add(new_post)
+            db.session.commit()
+            #conn = sqlite3.connect(db_path)
+            #c = conn.cursor()
+            return render_template("Create.html", form=form, logged_in=logged_in)  # Create a new blog post
+        flash('User not logged in')
+        return redirect(url_for('login')) 
 
 @app.route("/posts")
 def posts():
