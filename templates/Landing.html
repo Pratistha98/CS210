@@ -25,13 +25,24 @@
             </g>
           </svg>
           <!-- Buttons  -->
+          {% if logged_in %}
             <a href="http://localhost:5000/create"> 
               <div class="box-1">
-                <div class="btn btn-one"> 
+              <div class="btn btn-one"> 
               <span id="new">Share UR Experience</span>
-            </div>
-          </div> </a>
-   
+              </div>
+              </div> 
+            </a>
+          {% else %}
+            <a href="http://localhost:5000/login"> 
+              <div class="box-1">
+              <div class="btn btn-one"> 
+              <span id="new">Share UR Experience</span>
+              </div>
+              </div> 
+            </a>
+          {% endif %}
+
       <div class = "container">
         <!-- Blog cards   -->
   <div class ="row text-center">
