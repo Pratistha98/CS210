@@ -1,3 +1,9 @@
+.back {
+  /* background-image: url("home.jpg"); */
+  background-image:url("images/home.jpg");
+  background-repeat:no-repeat;
+  background-size:cover;
+}
 /* For Profile.html*/
 .fit{
   width: 100%;
@@ -56,6 +62,9 @@
   font-size: 50px;
   display: block;
   color: #05077a;
+  background-image:url("images/home.jpg");
+  background-size: 1000px 1000px;
+  background-repeat: no-repeat;
 }
 div[class*=box] {
 	height: 30%;
