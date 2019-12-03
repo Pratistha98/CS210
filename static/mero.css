@@ -402,7 +402,9 @@ The following code is for the styling specific to the login page
 /**The following code is for the styling specific to the Create blog post**/
 
 .body-create {
-  background-color: rgb(9, 20, 119);
+  background-image: url("images/Library.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 #create{
   position: relative;
