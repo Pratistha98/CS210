@@ -22,7 +22,7 @@
   color: #FFFFFF;
   background-color: rgb(14, 63, 199);
   border: 1px solid rgb(14, 63, 199);
-  border-radius: 5px;
+  border-radius: 0;
   box-shadow: 0px 5px 0px rgb(1, 36, 90);
   position: relative;
   top: 0px;
@@ -402,9 +402,7 @@ The following code is for the styling specific to the login page
 /**The following code is for the styling specific to the Create blog post**/
 
 .body-create {
-  background-image: url("images/Library.jpg");
-  background-repeat: no-repeat;
-  background-size: cover;
+  background-color: rgb(9, 20, 119);
 }
 #create{
   position: relative;
@@ -427,4 +425,8 @@ The following code is for the styling specific to the login page
     font-family: Verdana, Geneva, Tahoma, sans-serif;
     font-weight: bold;
   }
+
+  .btn.btn-square {border-radius: 0}
+
+  #like {text-align: right;}
 /********************************/
