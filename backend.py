@@ -11,6 +11,7 @@ from flask_login import LoginManager, UserMixin
 import os
 import sqlite3
 import base64
+import onetimepass
 from flask_migrate import Migrate
 from datetime import datetime
 
@@ -24,6 +25,7 @@ db = SQLAlchemy(app)
 login = LoginManager(app)
 migrate = Migrate(app, db)
 
+
 @login.user_loader
 def load_user(id):
     return User.query.get(int(id))
@@ -34,6 +36,20 @@ class User(db.Model, UserMixin):
     username = db.Column(db.String(15), unique=True, nullable = False)
     email = db.Column(db.String(50), unique=True, nullable = False)
     password = db.Column(db.String(128))
+    otp_secret = db.Column(db.String(16))
+
+    def __init__(self, **kwargs):
+        super(User, self).__init__(**kwargs)
+        if self.otp_secret is None:
+            self.otp_secret = base64.b32encode(os.urandom(10)).decode('utf-8')
+
+    def get_totp_uri(self):
+        return 'otpauth://totp/2FA-Demo:{0}?secret={1}&issuer=2FA-Demo' \
+            .format(self.username, self.otp_secret)
+
+    def verify_totp(self, token):
+        return onetimepass.valid_totp(token, self.otp_secret)
+
 
 class LoginForm(FlaskForm):
     username = StringField("Username", validators=[InputRequired(), Length(min=5, max=15)])
@@ -65,6 +81,7 @@ class Post(db.Model):
 class PostForm(FlaskForm):
     title = StringField("Title", validators=[InputRequired(), Length(min=5, max=200)])
     content = StringField("Content", validators=[InputRequired(), Length(min=5)])
+
 
 def checklogin():
     if current_user.is_authenticated:
@@ -116,9 +133,45 @@ def signup():
         new_user = User(username=form.username.data, email=form.email.data, password=hashed_password)
         db.session.add(new_user)
         db.session.commit()
-        return (redirect(url_for('login')))  # make sure this redirects to the home page
+        session['username'] = user.username
+        return redirect(url_for('two_factor_setup'))    #redirecting for two factor authentication
     logged_in = checklogin()   
-    return render_template("SignUp.html", form=form, logged_in=logged_in)  # Update with proper html file
+    return render_template("SignUp.html", form=form, logged_in=logged_in)  
+
+@app.route('/twofactor')
+def two_factor_setup():
+    if 'username' not in session:
+        return redirect(url_for('index'))
+    user = User.query.filter_by(username=session['username']).first()
+    if user is None:
+        return redirect(url_for('index'))
+    # since this page contains the sensitive qrcode, make sure the browser
+    # does not cache it
+    return render_template('two-factor-setup.html'), 200, {
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0'}
+
+@app.route('/qrcode')
+def qrcode():
+    if 'username' not in session:
+        abort(404)
+    user = User.query.filter_by(username=session['username']).first()
+    if user is None:
+        abort(404)
+
+    # for added security, remove username from session
+    del session['username']
+
+    # render qrcode for FreeTOTP
+    url = pyqrcode.create(user.get_totp_uri())
+    stream = BytesIO()
+    url.svg(stream, scale=5)
+    return stream.getvalue(), 200, {
+        'Content-Type': 'image/svg+xml',
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0'}
 
 @app.route('/Creation', methods=['GET', 'POST'])
 def Creation():
@@ -200,6 +253,10 @@ def view_post(pid):
 
 
 if __name__ == '__main__':
+    db.create_all()
+
+
+
     app.run(debug=True, host='localhost', port=5000)
 
 """!!!IDEA: annons can view first page of posts (clicking on a post still 
