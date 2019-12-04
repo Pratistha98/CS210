@@ -26,6 +26,7 @@ db = SQLAlchemy(app)
 login = LoginManager(app)
 migrate = Migrate(app, db)
 
+session = []
 
 @login.user_loader
 def load_user(id):
@@ -134,15 +135,15 @@ def signup():
         new_user = User(username=form.username.data, email=form.email.data, password=hashed_password)
         db.session.add(new_user)
         db.session.commit()
-        session['username'] = user.username
+        session.append(new_user.username)
         return redirect(url_for('two_factor_setup'))    #redirecting for two factor authentication
-    #logged_in = checklogin()   
+    logged_in = checklogin()   
     return render_template("SignUp.html", form=form, logged_in=logged_in)  
 
 @app.route('/twofactor')
 def two_factor_setup():
     if 'username' not in session:
-        return redirect(url_for('index'))
+        return redirect(url_for('home'))
     user = User.query.filter_by(username=session['username']).first()
     if user is None:
         return redirect(url_for('index'))
