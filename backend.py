@@ -52,6 +52,19 @@ class User(db.Model, UserMixin):
     def verify_totp(self, token):
         return onetimepass.valid_totp(token, self.otp_secret)
 
+class Post(db.Model):
+    __tablename__ = "Posts"
+    id = db.Column(db.Integer, primary_key=True, autoincrement = True)
+    title = db.Column(db.String(50), nullable = False)
+    body = db.Column(db.String(128))
+    #timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    #user_id = db.Column(db.Integer, db.ForeignKey('Users.id'))
+    # image = db.Column(db.Image)
+    # TODO: image = db.Column
+
+class PostForm(FlaskForm):
+    title = StringField("Title", validators=[InputRequired()])
+    body = StringField("Body", validators=[InputRequired()])
 
 class LoginForm(FlaskForm):
     username = StringField("Username", validators=[InputRequired(), Length(min=5, max=15)])
@@ -64,26 +77,6 @@ class SignupForm(FlaskForm):
     password = PasswordField("Password", validators=[InputRequired(), Length(min=8, max=128)])
     password_again = PasswordField("Password again", validators=[Required(), EqualTo('password')])
     # Muskaan : re-enter password function?
-
-class CreatePost(FlaskForm):
-    title = StringField("Email", validators=[InputRequired(), Email(message='Invalid Email'), Length(max=50)])
-    body = StringField("Username", validators=[InputRequired(), Length(min=5, max=15)])
-
-class Post(db.Model):
-    __tablename__ = "Posts"
-    id = db.Column(db.Integer, primary_key=True, autoincrement = True)
-    title = db.Column(db.String(45), nullable = False)
-    body = db.Column(db.String(140))
-    #timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
-    #user_id = db.Column(db.Integer, db.ForeignKey('Users.id'))
-    # image = db.Column(db.Image)
-    # TODO: image = db.Column
-
-
-class PostForm(FlaskForm):
-    title = StringField("Title", validators=[InputRequired(), Length(min=5, max=200)])
-    content = StringField("Content", validators=[InputRequired(), Length(min=5)])
-
 
 def checklogin():
     if current_user.is_authenticated:
@@ -140,6 +133,19 @@ def signup():
     logged_in = checklogin()   
     return render_template("SignUp.html", form=form, logged_in=logged_in)  
 
+@app.route('/create', methods=['GET', 'POST'])
+def create():
+    form = PostForm()
+    logged_in = checklogin()
+    if form.is_submitted():
+        new_post = Post(title=form.title.data, body=form.body.data)
+        db.session.add(new_post)
+        db.session.commit()
+        #conn = sqlite3.connect(db_path)
+        #c = conn.cursor()
+        return render_template("Landing.html", form=form, logged_in=logged_in)  # Create a new blog post  
+    return render_template("Create.html", form=form, logged_in=logged_in)  
+    
 @app.route('/twofactor')
 def two_factor_setup():
     if 'username' not in session:
@@ -226,22 +232,6 @@ id = db.Column(db.Integer, primary_key=True, nullable = False, autoincrement = T
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     user_id
 '''
-@app.route('/create', methods=['GET', 'POST'])
-def create():
-    form = CreatePost()
-    logged_in = checklogin() 
-    if request.method == 'GET':
-        return render_template("Create.html", form = form, logged_in = logged_in)
-    elif request.method == 'POST':
-        if current_user.is_authenticated:        
-            new_post = Post(title=form.title.data, body=form.body.data)
-            db.session.add(new_post)
-            db.session.commit()
-            #conn = sqlite3.connect(db_path)
-            #c = conn.cursor()
-            return render_template("Create.html", form=form, logged_in=logged_in)  # Create a new blog post
-        flash('User not logged in')
-        return redirect(url_for('login')) 
 
 @app.route("/posts")
 def posts():
