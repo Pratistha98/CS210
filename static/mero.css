@@ -1,3 +1,9 @@
+.back {
+  /* background-image: url("home.jpg"); */
+  background-image:url("images/home.jpg");
+  background-repeat:no-repeat;
+  background-size:cover;
+}
 /* For Profile.html*/
 .fit{
   width: 100%;
@@ -56,6 +62,9 @@
   font-size: 50px;
   display: block;
   color: #05077a;
+  background-image:url("images/home.jpg");
+  background-size: 1000px 1000px;
+  background-repeat: no-repeat;
 }
 div[class*=box] {
 	height: 30%;
@@ -402,7 +411,9 @@ The following code is for the styling specific to the login page
 /**The following code is for the styling specific to the Create blog post**/
 
 .body-create {
-  background-color: rgb(9, 20, 119);
+  background-image: url("images/Library.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 #create{
   position: relative;
