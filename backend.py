@@ -20,6 +20,7 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = "TvX<Z`%zPzNvt3M:Z]tE7dF*S}5o<pX$1@S6UvRy"
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///database.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+app.config["MFA_APP_NAME"] = "MFA-Demo"
 Bootstrap(app)
 db = SQLAlchemy(app)
 login = LoginManager(app)
@@ -135,7 +136,7 @@ def signup():
         db.session.commit()
         session['username'] = user.username
         return redirect(url_for('two_factor_setup'))    #redirecting for two factor authentication
-    logged_in = checklogin()   
+    #logged_in = checklogin()   
     return render_template("SignUp.html", form=form, logged_in=logged_in)  
 
 @app.route('/twofactor')
@@ -253,10 +254,9 @@ def view_post(pid):
 
 
 if __name__ == '__main__':
+    
     db.create_all()
-
-
-
+    db.session.commit()
     app.run(debug=True, host='localhost', port=5000)
 
 """!!!IDEA: annons can view first page of posts (clicking on a post still 
