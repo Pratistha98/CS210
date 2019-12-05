@@ -287,9 +287,8 @@ def logout():
 
 @app.route('/profile') 
 def profile():
-      return render_template("Profile.html")
-
-
+    logged_in = checklogin
+    return render_template("Profile.html", logged_in=logged_in)
 
 """!!!IDEA: annons can view first page of posts (clicking on a post still 
    forces you to login). When the user clicks to access the second+ page, 
