@@ -1,7 +1,7 @@
 from flask import Flask, render_template, url_for, redirect, flash, request
 from flask_bootstrap import Bootstrap
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField
 from wtforms.validators import InputRequired, Email, Length, Required, EqualTo
 from flask_sqlalchemy import SQLAlchemy
 # from sqlalchemy_imageattach.entity import Image, image_attachment
@@ -13,7 +13,11 @@ import sqlite3
 import base64
 import onetimepass
 from flask_migrate import Migrate
+from flask_mail import Mail, Message
 from datetime import datetime
+from time import time
+import jwt
+
 
 appdir = os.path.abspath(os.path.dirname(__file__))
 app = Flask(__name__)
@@ -21,12 +25,22 @@ app.config['SECRET_KEY'] = "TvX<Z`%zPzNvt3M:Z]tE7dF*S}5o<pX$1@S6UvRy"
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///database.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["MFA_APP_NAME"] = "MFA-Demo"
+app.config.update(dict(
+    DEBUG = True,
+    MAIL_SERVER = 'smtp.gmail.com',
+    MAIL_PORT = 587,
+    MAIL_USE_TLS = True,
+    MAIL_USE_SSL = False,
+    MAIL_USERNAME = 'blogcsc210@gmail.com',
+    MAIL_PASSWORD = 'gmemhpokpol123',
+))
 Bootstrap(app)
 db = SQLAlchemy(app)
 login = LoginManager(app)
 migrate = Migrate(app, db)
+mail = Mail(app)
 
-session = []
+session = {"username" : ""}
 
 @login.user_loader
 def load_user(id):
@@ -51,6 +65,20 @@ class User(db.Model, UserMixin):
 
     def verify_totp(self, token):
         return onetimepass.valid_totp(token, self.otp_secret)
+
+    @staticmethod
+    def verify_reset_password_token(token):
+        try:
+            id = jwt.decode(token, app.config['SECRET_KEY'],
+                            algorithms=['HS256'])['reset_password']
+        except:
+            return
+        return User.query.get(id)
+
+    def get_reset_password_token(self, expires_in=600):
+        return jwt.encode(
+            {'reset_password': self.id, 'exp': time() + expires_in},
+            app.config['SECRET_KEY'], algorithm='HS256').decode('utf-8')
 
 class Post(db.Model):
     __tablename__ = "Posts"
@@ -77,6 +105,16 @@ class SignupForm(FlaskForm):
     password = PasswordField("Password", validators=[InputRequired(), Length(min=8, max=128)])
     password_again = PasswordField("Password again", validators=[Required(), EqualTo('password')])
     # Muskaan : re-enter password function?
+
+class ForgotPasswordForm(FlaskForm):
+    email = StringField('Email', validators=[InputRequired(), Email()])
+    submit = SubmitField('Request Password Reset')
+
+class ResetPasswordForm(FlaskForm):
+    password = PasswordField('Password', validators=[InputRequired()])
+    password2 = PasswordField(
+        'Repeat Password', validators=[InputRequired(), EqualTo('password')])
+    submit = SubmitField('Request Password Reset')
 
 def checklogin():
     if current_user.is_authenticated:
@@ -128,7 +166,7 @@ def signup():
         new_user = User(username=form.username.data, email=form.email.data, password=hashed_password)
         db.session.add(new_user)
         db.session.commit()
-        session.append(new_user.username)
+        session['username'] = new_user.username
         return redirect(url_for('two_factor_setup'))    #redirecting for two factor authentication
     logged_in = checklogin()   
     return render_template("SignUp.html", form=form, logged_in=logged_in)  
@@ -141,18 +179,67 @@ def create():
         new_post = Post(title=form.title.data, body=form.body.data)
         db.session.add(new_post)
         db.session.commit()
-        #conn = sqlite3.connect(db_path)
-        #c = conn.cursor()
         return render_template("Landing.html", form=form, logged_in=logged_in)  # Create a new blog post  
     return render_template("Create.html", form=form, logged_in=logged_in)  
-    
+
+
+#----------------------------------------------------------------------------------------------
+#Forgot Password
+def send_email(subject, sender, recipients, text_body, html_body):
+    msg = Message(subject, sender=sender, recipients=recipients)
+    msg.body = text_body
+    msg.html = html_body
+    mail.send(msg)
+
+def send_password_reset_email(user):
+    token = user.get_reset_password_token()
+    send_email('[Microblog] Reset Your Password',
+               sender=app.config['ADMINS'][0],
+               recipients=[user.email],
+               text_body=render_template('email/reset_password.txt',
+                                         user=user, token=token),
+               html_body=render_template('email/reset_password.html',
+                                         user=user, token=token))
+
+@app.route('/forgotpassword', methods=['GET', 'POST'])
+def forgotpassword():
+    if current_user.is_authenticated:
+        return redirect(url_for('/'))
+    form = ForgotPasswordForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        if user:
+            send_password_reset_email(user)
+        flash('Check your email for the instructions to reset your password')
+        return redirect(url_for('login'))
+    flash('User with entered email not found')
+    return render_template('forgotpassword.html',
+                           title='Reset Password', form=form)
+
+@app.route('/reset_password/<token>', methods=['GET', 'POST'])
+def reset_password(token):
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+    user = User.verify_reset_password_token(token)
+    if not user:
+        return redirect(url_for('index'))
+    form = ResetPasswordForm()
+    if form.validate_on_submit():
+        user.set_password(form.password.data)
+        db.session.commit()
+        flash('Your passwordh as been reset.')
+        return redirect(url_for('login'))
+    return render_template('reset_password.html', form=form)
+#----------------------------------------------------------------------------------------------
+#2fa    
 @app.route('/twofactor')
 def two_factor_setup():
-    if 'username' not in session:
-        return redirect(url_for('home'))
+   
+   # if 'username' not in session:
+    #    return redirect(url_for('home'))
     user = User.query.filter_by(username=session['username']).first()
-    if user is None:
-        return redirect(url_for('index'))
+   # if user is None:
+    #    return redirect(url_for('home'))
     # since this page contains the sensitive qrcode, make sure the browser
     # does not cache it
     return render_template('two-factor-setup.html'), 200, {
