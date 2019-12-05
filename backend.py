@@ -193,7 +193,7 @@ def send_email(subject, sender, recipients, text_body, html_body):
 
 def send_password_reset_email(user):
     token = user.get_reset_password_token()
-    send_email('[Microblog] Reset Your Password',
+    send_email('[URBlog] Reset Your Password',
                sender=app.config['ADMINS'][0],
                recipients=[user.email],
                text_body=render_template('email/reset_password.txt',
@@ -219,7 +219,7 @@ def forgotpassword():
 @app.route('/reset_password/<token>', methods=['GET', 'POST'])
 def reset_password(token):
     if current_user.is_authenticated:
-        return redirect(url_for('index'))
+        return redirect(url_for('/'))
     user = User.verify_reset_password_token(token)
     if not user:
         return redirect(url_for('index'))
@@ -227,9 +227,10 @@ def reset_password(token):
     if form.validate_on_submit():
         user.set_password(form.password.data)
         db.session.commit()
-        flash('Your passwordh as been reset.')
+        flash('Your password has been reset.')
         return redirect(url_for('login'))
     return render_template('reset_password.html', form=form)
+
 #----------------------------------------------------------------------------------------------
 #2fa    
 @app.route('/twofactor')
