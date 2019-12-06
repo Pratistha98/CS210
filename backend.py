@@ -1,10 +1,11 @@
 from flask import Flask, render_template, url_for, redirect, flash, request
 from flask_bootstrap import Bootstrap
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, ValidationError
 from wtforms.validators import InputRequired, Email, Length, Required, EqualTo
 from flask_sqlalchemy import SQLAlchemy
 # from sqlalchemy_imageattach.entity import Image, image_attachment
+from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import current_user, login_user, logout_user
 from flask_login import LoginManager, UserMixin
@@ -18,22 +19,20 @@ from datetime import datetime
 from time import time
 import jwt
 
-
 appdir = os.path.abspath(os.path.dirname(__file__))
 app = Flask(__name__)
 app.config['SECRET_KEY'] = "TvX<Z`%zPzNvt3M:Z]tE7dF*S}5o<pX$1@S6UvRy"
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///database.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["MFA_APP_NAME"] = "MFA-Demo"
-app.config.update(dict(
-    DEBUG = True,
-    MAIL_SERVER = 'smtp.gmail.com',
-    MAIL_PORT = 587,
-    MAIL_USE_TLS = True,
-    MAIL_USE_SSL = False,
-    MAIL_USERNAME = 'blogcsc210@gmail.com',
-    MAIL_PASSWORD = 'gmemhpokpol123',
-))
+#For Email
+app.config['MAIL_SERVER'] = 'smtp.googlemail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USERNAME'] = 'blogcsc210@gmail.com'
+app.config['MAIL_PASSWORD'] = 'gmemhpokpol123'
+mail = Mail(app)
+#For Email
 Bootstrap(app)
 db = SQLAlchemy(app)
 login = LoginManager(app)
@@ -66,19 +65,18 @@ class User(db.Model, UserMixin):
     def verify_totp(self, token):
         return onetimepass.valid_totp(token, self.otp_secret)
 
-    @staticmethod
-    def verify_reset_password_token(token):
-        try:
-            id = jwt.decode(token, app.config['SECRET_KEY'],
-                            algorithms=['HS256'])['reset_password']
-        except:
-            return
-        return User.query.get(id)
+    def get_reset_token(self, expires_sec=1800):
+        s = Serializer(app.config['SECRET_KEY'], expires_sec)
+        return s.dumps({'user_id': self.id}).decode('utf-8')
 
-    def get_reset_password_token(self, expires_in=600):
-        return jwt.encode(
-            {'reset_password': self.id, 'exp': time() + expires_in},
-            app.config['SECRET_KEY'], algorithm='HS256').decode('utf-8')
+    @staticmethod
+    def verify_reset_token(token):
+        s = Serializer(app.config['SECRET_KEY'])
+        try:
+            user_id = s.loads(token)['user_id']
+        except:
+            return None
+        return User.query.get(user_id)
 
 class Post(db.Model):
     __tablename__ = "Posts"
@@ -106,15 +104,19 @@ class SignupForm(FlaskForm):
     password_again = PasswordField("Password again", validators=[Required(), EqualTo('password')])
     # Muskaan : re-enter password function?
 
-class ForgotPasswordForm(FlaskForm):
+class RequestResetForm(FlaskForm):
     email = StringField('Email', validators=[InputRequired(), Email()])
     submit = SubmitField('Request Password Reset')
 
+    def validate_email(self, email):
+        user = User.query.filter_by(email=email.data).first()
+        if user is None:
+            raise ValidationError('No account with that email exists!')
+
 class ResetPasswordForm(FlaskForm):
     password = PasswordField('Password', validators=[InputRequired()])
-    password2 = PasswordField(
-        'Repeat Password', validators=[InputRequired(), EqualTo('password')])
-    submit = SubmitField('Request Password Reset')
+    confirm_password = PasswordField('Confirm Password', validators=[InputRequired(), EqualTo('password')])
+    submit = SubmitField('Reset Password')
 
 def checklogin():
     if current_user.is_authenticated:
@@ -185,49 +187,43 @@ def create():
 
 #----------------------------------------------------------------------------------------------
 #Forgot Password
-def send_email(subject, sender, recipients, text_body, html_body):
-    msg = Message(subject, sender=sender, recipients=recipients)
-    msg.body = text_body
-    msg.html = html_body
+def send_reset_email(user):
+    token = user.get_reset_token()
+    msg = Message('Password Reset Request', sender='noreply@210project.com', recipients=[user.email])
+    msg.body = f'''To reset your password, visit the following link:
+{url_for('reset_token', token=token, _external=True)}
+If you did not make this request then simply ignore this email and no changes will be made.'''
     mail.send(msg)
 
-def send_password_reset_email(user):
-    token = user.get_reset_password_token()
-    send_email('[URBlog] Reset Your Password',
-               sender=app.config['ADMINS'][0],
-               recipients=[user.email],
-               text_body=render_template('email/reset_password.txt',
-                                         user=user, token=token),
-               html_body=render_template('email/reset_password.html',
-                                         user=user, token=token))
-
-@app.route('/forgotpassword', methods=['GET', 'POST'])
-def forgotpassword():
+@app.route('/reset_password', methods=['GET', 'POST'])
+def reset_request():
     if current_user.is_authenticated:
         return redirect(url_for('/'))
-    form = ForgotPasswordForm()
+    form = RequestResetForm()
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
         if user:
-            send_password_reset_email(user)
-        flash('Check your email for the instructions to reset your password')
-        return redirect(url_for('login'))
+            send_reset_email(user)
+            flash('Check your email for the instructions to reset your password', 'info')
+            return redirect(url_for('login'))
     flash('User with entered email not found')
-    return render_template('forgotpassword.html',
-                           title='Reset Password', form=form)
+    return render_template('forgotpassword.html', title='Reset Password', form=form)
 
 @app.route('/reset_password/<token>', methods=['GET', 'POST'])
-def reset_password(token):
+def reset_token(token):
     if current_user.is_authenticated:
         return redirect(url_for('/'))
-    user = User.verify_reset_password_token(token)
-    if not user:
-        return redirect(url_for('index'))
+    user = User.verify_reset_token(token)
+    if user is None:
+        flash("That is an invalid or expired token", "warning")
+        return redirect(url_for('reset_request'))
     form = ResetPasswordForm()
     if form.validate_on_submit():
-        user.set_password(form.password.data)
+        #hash the password first
+        hashed_password = generate_password_hash(form.password.data, method='pbkdf2:sha512:10000', salt_length=8)
+        user.password = hashed_password
         db.session.commit()
-        flash('Your password has been reset.')
+        flash('Your password has been reset.', "success")
         return redirect(url_for('login'))
     return render_template('reset_password.html', form=form)
 
