@@ -6,7 +6,7 @@
     <div class="container">
         <div class ="container">
             <div class="jumbotron">
-                    <form action ="/signup" method ="post">
+                    <form action ="/signup" method ="post" enctype="multipart/form-data">
                         <h1 class="header-login-signup" style="text-align: center">SIGN UP</h1>
                         {% if error %}
                                 <p class=error><strong>Error:</strong> {{ error }}
@@ -31,8 +31,9 @@
                             <!-- <input type="text" class="form-control" id="formGroupExampleInput" name ="username" placeholder="username"> -->
                         </div>
                         <div class="form-group">
-                                <label for="Name">Full Name </label>
-                                <input type="text" class="form-control"  name = "Full Name" placeholder="Full Name">
+                                <!-- <label for="Name">Full Name </label>
+                                <input type="text" class="form-control"  name = "Full Name" placeholder="Full Name"> -->
+                                {{wtf.form_field(form.full_name)}}
                             </div>
                         <div class="form-group">
                             {{wtf.form_field(form.password)}}
@@ -42,24 +43,27 @@
                                 {{wtf.form_field(form.password_again)}}   
                                 <!-- <input type="password" class="form-control" id="formGroupExampleInput2" name = "password" placeholder="Password"> -->
                             </div>
-                            <div class="form-group">
-                                    <label for="Name">Class Year </label>
-                                    <input type="text" class="form-control"  name = " Class Year" placeholder="Class Year">
-                                </div>
-                            <div class="form-group">
-                                    <label for="Description">Biography: Write About Yourself </label>
-                                    <textarea class="form-control" id="textarea" rows="20"></textarea>
-                                </div>   
-                                    <div class = "form-group">
-                                            <label for="Image">Profile Picture</label>
-                                            <input type="text" class="form-control"  name = "image" placeholder="Image">
-                                    </div>
+                        <!-- <div class="form-group">
+                                <label for="Name">Class Year </label>
+                                <input type="text" class="form-control"  name = " Class Year" placeholder="Class Year">
+                        </div> -->
+                        <!-- <div class="form-group">
+                                <label for="Description">Biography: Write About Yourself </label>
+                                <textarea class="form-control" id="textarea" rows="20"></textarea>
+                        </div>    -->
+                        <div class = "form-group">
+                                <!-- <label for="Image">Profile Picture</label>
+                                <input type="text" class="form-control"  name = "image" placeholder="Image"> -->
+                                Profile Picture
+                                {{ form.picture }}
+                        </div>
                         <div class="form-group">
-                            <button class ="btn btn-light btn-block" id = "startBtn">Sign Up</button>
+                            <!-- <button class ="btn btn-light btn-block" id = "startBtn">Sign Up</button> -->
+                            {{wtf.form_field(form.submit ,class ="btn btn-light btn-block btn-lg", id = "startBtn")}}
                         </div>
                         <p>Already have an account? Click <a href="http://localhost:5000/login"> here </a> to log in!</p>
                         <a href = "http://localhost:5000/">Go Back</a>	
-                    </form>
+                </form>
                 
             </div>
         </div>
