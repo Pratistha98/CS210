@@ -58,11 +58,7 @@ class User(db.Model, UserMixin):
     password = db.Column(db.String(60), nullable=False)
     picture = db.Column(db.String(20), nullable=False, default='default.jpg')
     posts = db.relationship('Post', backref='author', lazy=True)
-    otp_secret = db.Column(db.String(16))
 
-    def __init__(self):
-        if self.otp_secret is None:
-            self.otp_secret = random.randint(100000, 999999)
 
 class Post(db.Model):
     __tablename__ = "Posts"
@@ -300,10 +296,11 @@ def reset_token(token):
 #----------------------------------------------------------------------------------------------
 #2fa    
 
+otp_secret = str(random.randint(100000, 999999))
 def send_authorization_email(user):
     token = user.get_reset_token()
     msg = Message('OTP for Login', sender='noreply@210project.com', recipients=[user.email])
-    msg.body = '''Your 6 digit One Time Password is:''' + str(user.otp_secret)
+    msg.body = '''Your 6 digit One Time Password is:''' + str(otp_secret)
     mail.send(msg)
 
 @app.route('/otp', methods=['GET', 'POST'])
@@ -314,10 +311,11 @@ def otp_request():
     send_authorization_email(user)
     if form.validate_on_submit():
         otp = form.otp.data()
-        if otp == user.otp_secret:
+        if otp == otp_secret:
             redirect('/')
         else:
             flash('Invalid OTP. Check your email again')
+            otp_secret = str(random.randint(100000, 999999))
             send_authorization_email(user)
             return render_template("two-factor-setup.html", form=form, logged_in=logged_in)
 
