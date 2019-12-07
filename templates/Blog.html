@@ -1,39 +1,42 @@
 {%  extends "Header.html" %}
 {% block content %}
 <body>
-	<div class= "container">
-		<div class="row">
-			<div class="col-md-12">
-				<div class="card card-body bg-light">
-					<img class ="card-img-top" src="/static/images/Campus.jpg" >
-					<div class ="card-body">
-						<span>Like Button</span> 
-	                    <h4><a>Blog_Name</a></h4>
-	                    <p>
-	                       Submitted by: Name							
-	                    </p>
-	                    <p>Blog Description</p>
-	                    <button type="button" class="btn btn-warning btn-sm btn-square"> EDIT </button>
-	                    <button type="button" class="btn btn-danger btn-sm btn-square">DELETE</button>								
-					</div>					   
-				</div>			
-				<div class = "card card-body bg-light">
-					<div class="text-right">
-						<a class ="btn btn-success btn-square" href="#">Add New comment</a>
-					</div>
-	    			  	<div class="row">
-						 	<div class="col-md-9">
-						   		<strong>Commenter Username: </strong>
-								<p>
-									comment.text 
-	                            </p>
-								<a class ="btn btn-sm btn-warning btn-square" href="#">EDIT</a>
-								<button class="btn btn-sm btn-danger btn-square"> DELETE</button>              
-							 </div>
-						</div> 
+</br>
+</br>
+</br>
+<div class= "container">
+	<div class="row">
+		<div class="col-md-12">
+			<div class="card card-body bg-light">
+				<img class ="card-img-top" src="/static/images/Campus.jpg" >
+				<div class ="card-body">
+										
+					<h4><a>Blog_Name</a></h4>
+					<p>
+					   Submitted by: Name							
+					</p>
+					<p>Blog Description</p>
+					<button  class="btn btn-warning btn-sm "> EDIT </button>
+					<button type="button" class="btn btn-danger btn-sm ">DELETE</button>								
+				</div>					   
+			</div>			
+			<div class = "card card-body bg-light">
+				<div class="text-right">
+					<a class ="btn btn-success " href="#">Add New comment</a>
 				</div>
-	        </div>
+					  <div class="row">
+						 <div class="col-md-9">
+							   <strong>Commenter Username: </strong>
+							<p>
+								comment.text 
+							</p>
+							<button type="button" class="btn btn-success">Success</button>
+							<a class ="btn btn-sm btn-warning " href="#">EDIT</a>
+							<button class="btn btn-sm btn-danger"> DELETE</button>              
+						 </div>
+					</div> 
+			</div>
 		</div>
 	</div>
-</body>
+</div>
 {% endblock %}
