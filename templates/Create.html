@@ -5,6 +5,7 @@
 {%  extends "Header.html" %}
 {% block content %}
 
+<<<<<<< HEAD
 <body class="body-create">
     <div class="container">
             <div id = "create">
@@ -32,4 +33,46 @@
             </div>
     </div> 
 </body>
+=======
+<html>
+    <body class="body-create">
+        <div class="container">
+                <div id = "create">
+                        <form action ="/create" method ="post" id="blogform" enctype="multipart/form-data">
+                            <h1 class="header-login-signup" style="text-align: center"> Create UR Blog</h1>
+                            {{ form.hidden_tag() }}
+                            {{ form.csrf_token }} 
+                            <div class="form-group">
+                                <!-- <label for="Title"> Title </label> -->
+                                {{wtf.form_field(form.title)}}
+                                <!-- <input type="text" class="form-control" id="formGroupExampleInput" name ="Title" placeholder="Title"> -->
+                            </div>
+                            <div class="form-group">
+                                <!-- <label for="Description">Description</label> -->
+                                {{wtf.form_field(form.body)}}
+                                <!-- <textarea class="form-control" id="textarea" rows="30"></textarea> -->
+                            </div>
+                            <div class="form-group">
+                                <!-- <label for="Description">Description</label> -->
+                                {{ form.picture }}
+                                <!-- <textarea class="form-control" id="textarea" rows="30"></textarea> -->
+                            </div>
+                            <!-- <div class = "form-group">
+                                <label for="Image">Image</label>
+                                <input type="text" class="form-control" id="formGroupExampleInput2" name = "image" placeholder="Image">
+                            </div>
+                            <div class="form-group">
+                                <label for="Name">Name</label>
+                                <input type="text" class="form-control" id="Blogger" name ="Name" placeholder="Name">
+                            </div> -->
+                            <div class="form-group">
+                                <!-- <button class ="btn btn-light btn-block btn-lg" id = "startBtn">Submit</button> -->
+                                {{wtf.form_field(form.submit)}}
+                            </div>
+                        </form>
+                </div>
+        </div> 
+    </body>
+</html>
+>>>>>>> ff5ebdea3141f5f62b152a91b22daa793e70fe82
 {% endblock %}

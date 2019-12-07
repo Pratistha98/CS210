@@ -1,3 +1,42 @@
+/* For Blog.html*/
+a.btn:hover {
+  -webkit-transform: scale(1.1);
+  -moz-transform: scale(1.1);
+  -o-transform: scale(1.1);
+}
+a.btn {
+  -webkit-transform: scale(0.8);
+  -moz-transform: scale(0.8);
+  -o-transform: scale(0.8);
+  -webkit-transition-duration: 0.5s;
+  -moz-transition-duration: 0.5s;
+  -o-transition-duration: 0.5s;
+}
+.edit {
+  background-color: rgb(233, 205, 45); /* Green */
+  border: none;
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 20px;
+  width: 70px;
+  height: 37px;
+  border-radius: 9px;
+}
+.delete {
+  background-color: rgb(187, 16, 16); /* Green */
+  border: none;
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 20px;
+  width: 70px;
+  height: 37px;
+  border-radius: 9px;
+}
+/* For Landing.html*/
 .back {
   /* background-image: url("home.jpg"); */
   background-image:url("images/home.jpg");
@@ -441,6 +480,4 @@ The following code is for the styling specific to the login page
     border-radius: 10px;
 } 
 /** LIKE BUTTON **/
-
-
 /********************************/
