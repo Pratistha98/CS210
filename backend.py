@@ -20,6 +20,7 @@ from flask_migrate import Migrate
 from flask_mail import Mail, Message
 from datetime import datetime
 from time import time
+import random
 # import jwt
 
 appdir = os.path.abspath(os.path.dirname(__file__))
@@ -59,30 +60,9 @@ class User(db.Model, UserMixin):
     posts = db.relationship('Post', backref='author', lazy=True)
     otp_secret = db.Column(db.String(16))
 
-    def __init__(self, **kwargs):
-        super(User, self).__init__(**kwargs)
+    def __init__(self):
         if self.otp_secret is None:
-            self.otp_secret = base64.b32encode(os.urandom(10)).decode('utf-8')
-
-    def get_totp_uri(self):
-        return 'otpauth://totp/2FA-Demo:{0}?secret={1}&issuer=2FA-Demo' \
-            .format(self.username, self.otp_secret)
-
-    def verify_totp(self, token):
-        return onetimepass.valid_totp(token, self.otp_secret)
-
-    def get_reset_token(self, expires_sec=1800):
-        s = Serializer(app.config['SECRET_KEY'], expires_sec)
-        return s.dumps({'user_id': self.id}).decode('utf-8')
-
-    @staticmethod
-    def verify_reset_token(token):
-        s = Serializer(app.config['SECRET_KEY'])
-        try:
-            user_id = s.loads(token)['user_id']
-        except:
-            return None
-        return User.query.get(user_id)
+            self.otp_secret = random.randint(100000, 999999)
 
 class Post(db.Model):
     __tablename__ = "Posts"
@@ -146,6 +126,10 @@ class ResetPasswordForm(FlaskForm):
     password = PasswordField('Password', validators=[InputRequired()])
     confirm_password = PasswordField('Confirm Password', validators=[InputRequired(), EqualTo('password')])
     submit = SubmitField('Reset Password')
+
+class OTPForm(FlaskForm):
+    otp = StringField("OTP", validators=[InputRequired(), Length(min=6, max=6)])
+    submit = SubmitField("LogIn")
 
 def checklogin():
     if current_user.is_authenticated:
@@ -318,47 +302,30 @@ def reset_token(token):
 
 #----------------------------------------------------------------------------------------------
 #2fa    
-@app.route('/twofactor')
-def two_factor_setup():
-   
-   # if 'username' not in session:
-    #    return redirect(url_for('home'))
-    user = User.query.filter_by(username=session['username']).first()
-   # if user is None:
-    #    return redirect(url_for('home'))
-    # since this page contains the sensitive qrcode, make sure the browser
-    # does not cache it
-    return render_template('two-factor-setup.html'), 200, {
-        'Cache-Control': 'no-cache, no-store, must-revalidate',
-        'Pragma': 'no-cache',
-        'Expires': '0'}
 
-@app.route('/qrcode')
-def qrcode():
-    if 'username' not in session:
-        abort(404)
-    user = User.query.filter_by(username=session['username']).first()
-    if user is None:
-        abort(404)
+def send_authorization_email(user):
+    token = user.get_reset_token()
+    msg = Message('OTP for Login', sender='noreply@210project.com', recipients=[user.email])
+    msg.body = '''Your 6 digit One Time Password is:''' + str(user.otp_secret)
+    mail.send(msg)
 
-    # for added security, remove username from session
-    del session['username']
+@app.route('/otp', methods=['GET', 'POST'])
+def otp_request():
+    form = OTPForm()
+    if current_user.is_authenticated:
+        user = current_user
+    send_authorization_email(user)
+    if form.validate_on_submit():
+        otp = form.otp.data()
+        if otp == user.otp_secret:
+            redirect('/')
+        else:
+            flash('Invalid OTP. Check your email again')
+            send_authorization_email(user)
+            return render_template("two-factor-setup.html", form=form, logged_in=logged_in)
 
-    # render qrcode for FreeTOTP
-    url = pyqrcode.create(user.get_totp_uri())
-    stream = BytesIO()
-    url.svg(stream, scale=5)
-    return stream.getvalue(), 200, {
-        'Content-Type': 'image/svg+xml',
-        'Cache-Control': 'no-cache, no-store, must-revalidate',
-        'Pragma': 'no-cache',
-        'Expires': '0'}
 
-@app.route('/Creation', methods=['GET', 'POST'])
-def Creation():
-    form = PostForm()
-    logged_in = checklogin()   
-    return render_template("Create.html", logged_in=logged_in)  # Create a new blog post 
+#--------------------------------------------------------------------------------------------------
 
 @app.route('/blog')
 def Blog():
