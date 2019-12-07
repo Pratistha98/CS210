@@ -170,7 +170,7 @@ def posts():
 
 @app.route("/posts/<int:pid>")  # login required
 def view_post(pid):
-    post = Post.query.filter_by(id=pid)
+    post = Post.query.filter_by(id=pid).first()
     return render_template("Blog.html", post=post)
 
 @app.route("/account", methods=['GET', 'POST'])
@@ -179,8 +179,8 @@ def account():
     form = UpdateAccountForm()
     if form.validate_on_submit():
         if form.picture.data:
-            picture_file = save_picture(form.picture.data)
-            current_user.image_file = picture_file
+            picture_file = save_profile_picture(form.picture.data)
+            current_user.picture = picture_file
         current_user.username = form.username.data
         current_user.email = form.email.data
         db.session.commit()
@@ -189,8 +189,8 @@ def account():
     elif request.method == 'GET':
         form.username.data = current_user.username
         form.email.data = current_user.email
-    image_file = url_for('static', filename='profile_pics/' + current_user.image_file)
-    return render_template('account.html', title='Account', image_file=image_file, form=form)
+    picture = url_for('static', filename='user_pictures/' + current_user.picture)
+    return render_template('account.html', title='Account', picture=picture, form=form)
 
 @app.route('/login', methods=['GET', 'POST'])  # Check if this works properly
 def login(): 
@@ -265,9 +265,9 @@ def save_profile_picture(user_picture):
     _, f_ext = os.path.splitext(user_picture.filename)
     picture_fn = random_hex + f_ext
     picture_path = os.path.join(app.root_path, 'static/user_pictures', picture_fn)
-    output_size = (125, 125)
+    output_size = (25, 25)
     i = Image.open(user_picture)
-    i = ImageOps.fit(i, (125, 125), Image.ANTIALIAS)
+    i = ImageOps.fit(i, (25, 25), Image.ANTIALIAS)
     i.thumbnail(output_size)
     i.save(picture_path)
     return picture_fn

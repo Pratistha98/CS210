@@ -7,9 +7,9 @@
 			<div class="card-body">
 				<div class="container">
 					<div class="jumbotron-blog">
-						<h1>Blog Post Title</h1>
-						<h5>By: Username</h5>
-						<p>[Post Content]</p>
+						<h1>{{ post.title }}</h1>
+						<h5>By: {{ post.author.username }}</h5>
+						<p>{{ post.description }}</p>
 						<div class="container h-100">
 							<div class="d-flex h-100">
 								<div class="align-self-end ml-auto btn-group-vertical">
