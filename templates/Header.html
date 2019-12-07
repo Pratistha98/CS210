@@ -28,8 +28,8 @@
     <div class="collapse navbar-collapse " id="forDisplay">
       <ul class="navbar-nav ml-auto">
         {% if logged_in %}
+          <a class="nav-link" href="http://localhost:5000/profile"><img src="/static/user_pictures/{{current_user.picture}}"></a>
           <a class="nav-link" href="http://localhost:5000/">Home</a>
-          <a class="nav-link" href="http://localhost:5000/profile">Profile</a>
           <a class="nav-link" href="http://localhost:5000/logout">Logout</a>
           <a class="nav-link" href="#">About</a>
         {% else %}
@@ -45,8 +45,8 @@
     <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
     <div class="overlay-content">
         {% if logged_in %}
+        <a class="nav-link" href="http://localhost:5000/profile"><img src="https://img.icons8.com/ios-glyphs/30/000000/user--v1.png"></a>
         <a class="nav-link" href="http://localhost:5000/">Home</a>
-        <a class="nav-link" href="http://localhost:5000/profile">Profile</a>
         <a class="nav-link" href="http://localhost:5000/logout">Logout</a>
         <a class="nav-link" href="#">About</a>
       {% else %}

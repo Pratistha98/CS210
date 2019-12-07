@@ -1,42 +1,67 @@
 {%  extends "Header.html" %}
 {% block content %}
 <body>
-</br>
-</br>
-</br>
-<div class= "container">
-	<div class="row">
-		<div class="col-md-12">
-			<div class="card card-body bg-light">
-				<img class ="card-img-top" src="/static/images/Campus.jpg" >
-				<div class ="card-body">
-										
-					<h4><a>Blog_Name</a></h4>
-					<p>
-					   Submitted by: Name							
-					</p>
-					<p>Blog Description</p>
-					<button  class="btn btn-warning btn-sm "> EDIT </button>
-					<button type="button" class="btn btn-danger btn-sm ">DELETE</button>								
-				</div>					   
-			</div>			
-			<div class = "card card-body bg-light">
-				<div class="text-right">
-					<a class ="btn btn-success " href="#">Add New comment</a>
+	<div class="col-md-12">
+		<div class="card">
+			<img class ="card-img-top" src="/static/images/Campus.jpg" >
+			<div class="card-body">
+				<div class="container">
+					<div class="jumbotron-blog">
+						<h1>{{ post.title }}</h1>
+						<h5>By: {{ post.author.username }}</h5>
+						<p>{{ post.description }}</p>
+						<div class="container h-100">
+							<div class="d-flex h-100">
+								<div class="align-self-end ml-auto btn-group-vertical">
+
+									<figure class="figure">
+										<a href="#"><img src="https://img.icons8.com/material-sharp/48/000000/edit.png" hspace="20"> </a>
+										<figcaption class="figure-caption text-center"> Edit</figcaption>
+									  </figure>
+
+					  				<figure class="figure">
+										<a href="#"> <img src="https://img.icons8.com/material-rounded/48/000000/filled-trash.png" hspace="20"></a>
+										<figcaption class="figure-caption text-center"> Delete</figcaption>
+									  </figure>
+
+					  				<figure class="figure">
+										<a href="#"><img src="https://img.icons8.com/material-rounded/48/000000/star.png" hspace="20"> </a>
+										<figcaption class="figure-caption text-center">Like</figcaption>
+									  </figure>
+
+					  				<figure class="figure">
+										<a href="#"><img src="https://img.icons8.com/material-rounded/48/000000/comments.png" hspace="20"> </a>
+										<figcaption class="figure-caption text-center">Comment</figcaption>
+									  </figure>
+
+								</div>
+							</div>
+						</div>
+
+						<hr class="my-4">
+						<h6 style="text-align: left">Commenter Username</h6>
+						<p style="text-align: left">[Comment Content]</p>
+						<div class="container h-100">
+							<div class="d-flex h-100">
+								<div class="align-self-end ml-auto btn-group-vertical">
+
+									<figure class="figure">
+										<a href="#"><img src="https://img.icons8.com/material-sharp/48/000000/edit.png" hspace="20"> </a>
+										<figcaption class="figure-caption text-center"> Edit</figcaption>
+									  </figure>
+
+					  				<figure class="figure">
+										<a href="#"> <img src="https://img.icons8.com/material-rounded/48/000000/filled-trash.png" hspace="20"></a>
+										<figcaption class="figure-caption text-center"> Delete</figcaption>
+									  </figure> 
+
+								</div>
+							</div>
+						</div>
+					</div>
 				</div>
-					  <div class="row">
-						 <div class="col-md-9">
-							   <strong>Commenter Username: </strong>
-							<p>
-								comment.text 
-							</p>
-							<button type="button" class="btn btn-success">Success</button>
-							<a class ="btn btn-sm btn-warning " href="#">EDIT</a>
-							<button class="btn btn-sm btn-danger"> DELETE</button>              
-						 </div>
-					</div> 
 			</div>
 		</div>
 	</div>
-</div>
+</body>
 {% endblock %}

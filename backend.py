@@ -1,15 +1,16 @@
 from flask import Flask, render_template, url_for, redirect, flash, request
 from flask_bootstrap import Bootstrap
 from flask_wtf import FlaskForm
-from flask_wtf.file import FileField, FileAllowed, FileRequired
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, ValidationError, TextAreaField
+from flask_wtf.file import FileField, FileAllowed, FileRequired
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, ValidationError
 from wtforms.validators import InputRequired, Email, Length, Required, EqualTo
 from flask_sqlalchemy import SQLAlchemy
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import current_user, login_user, logout_user
-from flask_login import LoginManager, UserMixin
-from PIL import Image
+from flask_login import LoginManager, UserMixin, login_required
+from PIL import Image, ImageOps
 import os
 import sqlite3
 import base64
@@ -86,12 +87,31 @@ class LoginForm(FlaskForm):
 
 class SignupForm(FlaskForm):
     email = StringField("Email", validators=[InputRequired(), Email(message='Invalid Email'), Length(max=50)])
-    username = StringField("Username", validators=[InputRequired(), Length(min=5, max=15)])
-    full_name = StringField("Full Name", validators=[InputRequired(), Length(min=5, max=15)])
+    username = StringField("Username", validators=[InputRequired(), Length(min=2, max=20)])
+    full_name = StringField("Full Name", validators=[InputRequired(), Length(min=5, max=35)])
     password = PasswordField("Password", validators=[InputRequired(), Length(min=8, max=128)])
     password_again = PasswordField("Confirm Password", validators=[InputRequired(), EqualTo('password')])
     picture = FileField('Picture', validators=[FileAllowed(['jpg', 'png'])])
     submit = SubmitField("SignUp")
+
+class UpdateAccountForm(FlaskForm):
+    username = StringField('Username', validators=[InputRequired(), Length(min=2, max=20)])
+    full_name = StringField("Full Name", validators=[InputRequired(), Length(min=5, max=35)])
+    email = StringField('Email', validators=[InputRequired(), Email()])
+    picture = FileField('Update Profile Picture', validators=[FileAllowed(['jpg', 'png'])])
+    submit = SubmitField('Update')
+
+    def validate_username(self, username):
+        if username.data != current_user.username:
+            user = User.query.filter_by(username=username.data).first()
+            if user:
+                raise ValidationError('That username is taken. Please choose a different one.')
+
+    def validate_email(self, email):
+        if email.data != current_user.email:
+            user = User.query.filter_by(email=email.data).first()
+            if user:
+                raise ValidationError('That email is taken. Please choose a different one.')
 
 class RequestResetForm(FlaskForm):
     email = StringField('Email', validators=[InputRequired(), Email()])
@@ -124,7 +144,37 @@ def home():
     # db.create_all()
     # db.session.commit()
     logged_in = checklogin()
-    return render_template("Landing.html", logged_in=logged_in)
+    posts = Post.query.all()
+    return render_template("Landing.html", logged_in=logged_in, posts=posts)
+
+@app.route("/posts")
+def posts():
+    post = Post.query.all()
+    return render_template("posts.html")
+
+@app.route("/posts/<int:pid>")  # login required
+def view_post(pid):
+    post = Post.query.filter_by(id=pid).first()
+    return render_template("Blog.html", post=post)
+
+@app.route("/account", methods=['GET', 'POST'])
+@login_required
+def account():
+    form = UpdateAccountForm()
+    if form.validate_on_submit():
+        if form.picture.data:
+            picture_file = save_profile_picture(form.picture.data)
+            current_user.picture = picture_file
+        current_user.username = form.username.data
+        current_user.email = form.email.data
+        db.session.commit()
+        flash('Your account has been updated!', 'success')
+        return redirect(url_for('account'))
+    elif request.method == 'GET':
+        form.username.data = current_user.username
+        form.email.data = current_user.email
+    picture = url_for('static', filename='user_pictures/' + current_user.picture)
+    return render_template('account.html', title='Account', picture=picture, form=form)
 
 @app.route('/login', methods=['GET', 'POST'])  # Check if this works properly
 def login(): 
@@ -170,6 +220,7 @@ def signup():
     return render_template("SignUp.html", form=form, logged_in=logged_in)  
 
 @app.route('/create', methods=['GET', 'POST'])
+@login_required
 def create():
     form = PostForm()
     if form.validate_on_submit():
@@ -198,8 +249,9 @@ def save_profile_picture(user_picture):
     _, f_ext = os.path.splitext(user_picture.filename)
     picture_fn = random_hex + f_ext
     picture_path = os.path.join(app.root_path, 'static/user_pictures', picture_fn)
-    output_size = (125, 125)
+    output_size = (25, 25)
     i = Image.open(user_picture)
+    i = ImageOps.fit(i, (25, 25), Image.ANTIALIAS)
     i.thumbnail(output_size)
     i.save(picture_path)
     return picture_fn
@@ -317,21 +369,7 @@ id = db.Column(db.Integer, primary_key=True, nullable = False, autoincrement = T
     user_id
 '''
 
-@app.route("/posts")
-def posts():
-    posts = session.query(Post).all()
-    return render_template("posts.html")
-
-@app.route("/posts/<int:pid>")  # login required
-def view_post(pid):
-    post = session.query(Post).filter_by(id=pid).one()
-    return render_template("post.html", post=post)
-
-
 if __name__ == '__main__':
-    
-    db.create_all()
-    db.session.commit()
     app.run(debug=True, host='localhost', port=5000)
 
 """!!!IDEA: annons can view first page of posts (clicking on a post still 

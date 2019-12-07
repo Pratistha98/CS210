@@ -20,7 +20,7 @@
                             </div>
                             <div class="form-group">
                                 <!-- <label for="Description">Description</label> -->
-                                {{wtf.form_field(form.description)}}
+                                {{wtf.form_field(form.description, id = "textarea", rows="16")}}
                                 <!-- <textarea class="form-control" id="textarea" rows="30"></textarea> -->
                             </div>
                             <div class="form-group">
@@ -36,9 +36,9 @@
                                 <label for="Name">Name</label>
                                 <input type="text" class="form-control" id="Blogger" name ="Name" placeholder="Name">
                             </div> -->
-                            <div class="form-group">
+                            <div>
                                 <!-- <button class ="btn btn-light btn-block btn-lg" id = "startBtn">Submit</button> -->
-                                {{wtf.form_field(form.submit)}}
+                                {{wtf.form_field(form.submit, class ="btn btn-light btn-block btn-lg", id = "startBtn")}}
                             </div>
                         </form>
                 </div>
