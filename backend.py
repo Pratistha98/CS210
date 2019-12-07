@@ -1,7 +1,7 @@
 from flask import Flask, render_template, url_for, redirect, flash, request
 from flask_bootstrap import Bootstrap
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, ValidationError
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, ValidationError, TextAreaField
 from wtforms.validators import InputRequired, Email, Length, Required, EqualTo
 from flask_sqlalchemy import SQLAlchemy
 # from sqlalchemy_imageattach.entity import Image, image_attachment
@@ -90,7 +90,7 @@ class Post(db.Model):
 
 class PostForm(FlaskForm):
     title = StringField("Title", validators=[InputRequired()])
-    body = StringField("Body", validators=[InputRequired()])
+    description = TextAreaField("Description", validators=[InputRequired()])
 
 class LoginForm(FlaskForm):
     username = StringField("Username", validators=[InputRequired(), Length(min=5, max=15)])

@@ -428,16 +428,19 @@ The following code is for the styling specific to the login page
   
 }
 #textarea {
-
-  text-align: top;
-  word-wrap: break-word;
+  height: 1000px!important;
+  width : 100%;
   }
   .form-group{
     font-family: Verdana, Geneva, Tahoma, sans-serif;
     font-weight: bold;
   }
+  .btn-xs {
+    padding: 10px 20px;
+    font-size: 20px;
+    border-radius: 10px;
+} 
+/** LIKE BUTTON **/
 
-  .btn.btn-square {border-radius: 0}
 
-  #like {text-align: right;}
 /********************************/

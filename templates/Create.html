@@ -11,14 +11,11 @@
                     <form action ="/create" method ="post" id="blogform">
                         <h1 class="header-login-signup" style="text-align: center"> Create UR Blog</h1>
                         <div class="form-group">
-                            <label for="Title"> Title </label>
                             {{wtf.form_field(form.title)}}
                             <!-- <input type="text" class="form-control" id="formGroupExampleInput" name ="Title" placeholder="Title"> -->
                         </div>
                         <div class="form-group">
-                            <label for="Description">Description</label>
-                            {{wtf.form_field(form.body)}}
-                            <!-- <textarea class="form-control" id="textarea" rows="30"></textarea> -->
+                            {{wtf.form_field(form.description, id = "textarea", rows="30")}}>
                         </div>
                         <!-- <div class = "form-group">
                             <label for="Image">Image</label>
