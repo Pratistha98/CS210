@@ -1,6 +1,7 @@
 from flask import Flask, render_template, url_for, redirect, flash, request
 from flask_bootstrap import Bootstrap
 from flask_wtf import FlaskForm
+from flask_wtf.file import FileField, FileAllowed, FileRequired
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, ValidationError
 from wtforms.validators import InputRequired, Email, Length, Required, EqualTo
 from flask_sqlalchemy import SQLAlchemy
@@ -9,15 +10,17 @@ from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import current_user, login_user, logout_user
 from flask_login import LoginManager, UserMixin
+from PIL import Image
 import os
 import sqlite3
 import base64
+import secrets
 import onetimepass
 from flask_migrate import Migrate
 from flask_mail import Mail, Message
 from datetime import datetime
 from time import time
-import jwt
+# import jwt
 
 appdir = os.path.abspath(os.path.dirname(__file__))
 app = Flask(__name__)
@@ -83,25 +86,28 @@ class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement = True)
     title = db.Column(db.String(50), nullable = False)
     body = db.Column(db.String(128))
-    #timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
-    #user_id = db.Column(db.Integer, db.ForeignKey('Users.id'))
-    # image = db.Column(db.Image)
-    # TODO: image = db.Column
+    time = db.Column(db.DateTime)
+    user_id = db.Column(db.Integer, db.ForeignKey('Users.id'))
+    picture = db.Column(db.String(50), nullable = True)
 
 class PostForm(FlaskForm):
     title = StringField("Title", validators=[InputRequired()])
     body = StringField("Body", validators=[InputRequired()])
+    picture = FileField('Picture', validators=[FileAllowed(['jpg', 'png'])])
+    submit = SubmitField("Post")
 
 class LoginForm(FlaskForm):
     username = StringField("Username", validators=[InputRequired(), Length(min=5, max=15)])
     password = PasswordField("Password", validators=[InputRequired(), Length(min=8, max=128)])
     remember_me = BooleanField("Remember Me")
+    submit = SubmitField("LogIn")
 
 class SignupForm(FlaskForm):
     email = StringField("Email", validators=[InputRequired(), Email(message='Invalid Email'), Length(max=50)])
     username = StringField("Username", validators=[InputRequired(), Length(min=5, max=15)])
     password = PasswordField("Password", validators=[InputRequired(), Length(min=8, max=128)])
-    password_again = PasswordField("Password again", validators=[Required(), EqualTo('password')])
+    password_again = PasswordField("Password again", validators=[InputRequired(), EqualTo('password')])
+    submit = SubmitField("SignUp")
     # Muskaan : re-enter password function?
 
 class RequestResetForm(FlaskForm):
@@ -176,14 +182,27 @@ def signup():
 @app.route('/create', methods=['GET', 'POST'])
 def create():
     form = PostForm()
-    logged_in = checklogin()
-    if form.is_submitted():
-        new_post = Post(title=form.title.data, body=form.body.data)
+    if form.validate_on_submit():
+        new_post = Post(title=form.title.data, body=form.body.data, time = datetime.now(), user_id = current_user.id)
+        if form.picture.data:
+            picture_file = save_picture(form.picture.data)
+            new_post.picture = picture_file
         db.session.add(new_post)
         db.session.commit()
-        return render_template("Landing.html", form=form, logged_in=logged_in)  # Create a new blog post  
-    return render_template("Create.html", form=form, logged_in=logged_in)  
+        logged_in = checklogin()
+        flash("Posted Successfully", "success")
+        return redirect(url_for('home'))  # Create a new blog post  
+    logged_in = checklogin()
+    return render_template("Create.html", form=form, logged_in=logged_in)
 
+def save_picture(post_picture):
+    random_hex = secrets.token_hex(8)
+    _, f_ext = os.path.splitext(post_picture.filename)
+    picture_fn = random_hex + f_ext
+    picture_path = os.path.join(app.root_path, 'static/post_pictures', picture_fn)
+    post_picture.save(picture_path)
+
+    return picture_fn
 
 #----------------------------------------------------------------------------------------------
 #Forgot Password
@@ -219,7 +238,6 @@ def reset_token(token):
         return redirect(url_for('reset_request'))
     form = ResetPasswordForm()
     if form.validate_on_submit():
-        #hash the password first
         hashed_password = generate_password_hash(form.password.data, method='pbkdf2:sha512:10000', salt_length=8)
         user.password = hashed_password
         db.session.commit()
