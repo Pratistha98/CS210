@@ -43,7 +43,26 @@
             </a>
           {% endif %}
 
-      <div class = "container">
+      <div class = "row text-center">
+          {% for post in posts %}
+          <div class ="col-md-4 col-sm-6">
+              <div class = "card">   
+                <a href="{{ post.id }}"> <img class ="card-img" src="/static/images/Library.jpg">
+                  <div class = "card body">
+                      <h4 class = "card-title" id = "text"> {{ post.title }} </h4>
+                    </div>
+                    <div class = "card-img-overlay text-center">
+                  <h4> Read More</h4>
+                  <h4> Submitted By: {{ post.author.username }}</h4>
+                </div>  
+                </a>
+              </div>
+            </div>
+          <!-- {{ post.author.username }}
+          {{ post.time.strftime('%Y-%m-%d') }}
+          {{ post.title }}
+          {{ post.description }} -->
+      {% endfor %}
         <!-- Blog cards   -->
   <!-- <div class ="row text-center">
     <div class ="col-md-4 col-sm-6">
@@ -98,10 +117,5 @@
           </div>
       </div>
     </div> -->
-    {% for post in posts %}
-        {{ post.author.username }}
-        {{ post.time.strftime('%Y-%m-%d') }}
-        {{ post.title }}
-        {{ post.description }}
-    {% endfor %}
+    
 {% endblock %}
