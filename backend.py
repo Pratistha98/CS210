@@ -50,9 +50,12 @@ def load_user(id):
 class User(db.Model, UserMixin):
     __tablename__ = "Users"
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    email = db.Column(db.String(120), unique=True, nullable=False)
     username = db.Column(db.String(15), unique=True, nullable = False)
-    email = db.Column(db.String(50), unique=True, nullable = False)
-    password = db.Column(db.String(128))
+    full_name = db.Column(db.String(128), nullable = False)
+    password = db.Column(db.String(60), nullable=False)
+    picture = db.Column(db.String(20), nullable=False, default='default.jpg')
+    posts = db.relationship('Post', backref='author', lazy=True)
     otp_secret = db.Column(db.String(16))
 
     def __init__(self, **kwargs):
@@ -86,7 +89,7 @@ class Post(db.Model):
     title = db.Column(db.String(50), nullable = False)
     description = db.Column(db.String(128))
     time = db.Column(db.DateTime)
-    user_id = db.Column(db.Integer, db.ForeignKey('Users.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('Users.id'), nullable=False)
     picture = db.Column(db.String(50), nullable = True)
 
 class PostForm(FlaskForm):
@@ -104,10 +107,11 @@ class LoginForm(FlaskForm):
 class SignupForm(FlaskForm):
     email = StringField("Email", validators=[InputRequired(), Email(message='Invalid Email'), Length(max=50)])
     username = StringField("Username", validators=[InputRequired(), Length(min=5, max=15)])
+    full_name = StringField("Full Name", validators=[InputRequired(), Length(min=5, max=15)])
     password = PasswordField("Password", validators=[InputRequired(), Length(min=8, max=128)])
-    password_again = PasswordField("Password again", validators=[InputRequired(), EqualTo('password')])
+    password_again = PasswordField("Confirm Password", validators=[InputRequired(), EqualTo('password')])
+    picture = FileField('Picture', validators=[FileAllowed(['jpg', 'png'])])
     submit = SubmitField("SignUp")
-    # Muskaan : re-enter password function?
 
 class RequestResetForm(FlaskForm):
     email = StringField('Email', validators=[InputRequired(), Email()])
@@ -145,7 +149,7 @@ def login():
         return render_template("LoggedIn.html", username = username)
     form = LoginForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(username=form.username.data).firsst()
+        user = User.query.filter_by(username=form.username.data).first()
         if user is None or not check_password_hash(user.password, form.password.data):
             flash('Invalid username or password')
             return redirect(url_for('login'))
@@ -170,7 +174,10 @@ def signup():
             flash('Email already taken')
             return (redirect(url_for('signup')))
         hashed_password = generate_password_hash(form.password.data, method='pbkdf2:sha512:10000', salt_length=8)
-        new_user = User(username=form.username.data, email=form.email.data, password=hashed_password)
+        new_user = User(email=form.email.data, username=form.username.data, full_name = form.full_name.data, password=hashed_password)
+        if form.picture.data:
+            picture_file = save_profile_picture(form.picture.data)
+            new_user.picture = picture_file
         db.session.add(new_user)
         db.session.commit()
         session['username'] = new_user.username
@@ -200,7 +207,17 @@ def save_picture(post_picture):
     picture_fn = random_hex + f_ext
     picture_path = os.path.join(app.root_path, 'static/post_pictures', picture_fn)
     post_picture.save(picture_path)
+    return picture_fn
 
+def save_profile_picture(user_picture):
+    random_hex = secrets.token_hex(8)
+    _, f_ext = os.path.splitext(user_picture.filename)
+    picture_fn = random_hex + f_ext
+    picture_path = os.path.join(app.root_path, 'static/user_pictures', picture_fn)
+    output_size = (125, 125)
+    i = Image.open(user_picture)
+    i.thumbnail(output_size)
+    i.save(picture_path)
     return picture_fn
 
 #----------------------------------------------------------------------------------------------
