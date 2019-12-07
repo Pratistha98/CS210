@@ -235,7 +235,7 @@ def signup():
     logged_in = checklogin()   
     return render_template("SignUp.html", form=form, logged_in=logged_in)  
 
-@app.route('/post/create', methods=['GET', 'POST'])
+@app.route('/create', methods=['GET', 'POST'])
 @login_required
 def create():
     form = PostForm()
