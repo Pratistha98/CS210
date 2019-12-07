@@ -1,10 +1,46 @@
-{% extends "Header.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
+{%  extends "Header.html" %}
 {% block content %}
 
-    <h1>Two Factor Authentication Setup</h1>
-    <p>You are almost done! Please start FreeOTP on your smartphone and scan the following QR Code with it:</p>
-    <p><img id="qrcode" src="{{ url_for('qrcode') }}"></p>
-    <p>I'm done, take me to the <a href="{{ url_for('login') }}">Login</a> page!</p>
-    
+<html>
+    <body class="body-login">
+        <div class="container">
+            <div class ="container">
+                <div class="jumbotron">
+                        <form action="/otp" method ="Post">
+                            <h1 class="header-login-signup" style="text-align: center">LOGIN</h1>
+                                {% if error %}
+                                    <p class=error><strong>Error:</strong> {{ error }}
+                                {% endif %}
+                                {% with messages = get_flashed_messages() %}
+                                    {% if messages %}
+                                        <ul class=flashes>
+                                        {% for message in messages %}
+                                            <li>{{ message }}</li>
+                                        {% endfor %}
+                                        </ul>
+                                    {% endif %}
+                                {% endwith %}
+
+                            {{form.hidden_tag()}}
+                            {{ form.csrf_token }}    
+
+                            <div class="form-group">
+                                {{wtf.form_field(form.otp)}}	
+                                <!-- <input type="password" class="form-control" id="formGroupExampleInput2" name = "password" placeholder="Password"> -->
+                            </div>
+                            
+                            <div class="form-group">
+                                <button class="btn btn-light btn-block" id = "startBtn" style="text-align: center;">Submit</button>
+
+                            <a href = "http://localhost:5000/">Go Back</a>	
+                            
+                        </form>
+                </div>
+            </div>
+        </div>  
+    </body>
+</html>
 {% endblock %}
+
+
