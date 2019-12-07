@@ -8,8 +8,8 @@ from flask_sqlalchemy import SQLAlchemy
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import current_user, login_user, logout_user
-from flask_login import LoginManager, UserMixin
-from PIL import Image
+from flask_login import LoginManager, UserMixin, login_required
+from PIL import Image, ImageOps
 import os
 import sqlite3
 import base64
@@ -140,7 +140,8 @@ def home():
     # db.create_all()
     # db.session.commit()
     logged_in = checklogin()
-    return render_template("Landing.html", logged_in=logged_in)
+    posts = Post.query.all()
+    return render_template("Landing.html", logged_in=logged_in, posts=posts)
 
 @app.route('/login', methods=['GET', 'POST'])  # Check if this works properly
 def login(): 
@@ -185,7 +186,8 @@ def signup():
     logged_in = checklogin()   
     return render_template("SignUp.html", form=form, logged_in=logged_in)  
 
-@app.route('/create', methods=['GET', 'POST'])
+@app.route('/post/create', methods=['GET', 'POST'])
+@login_required
 def create():
     form = PostForm()
     if form.validate_on_submit():
@@ -216,6 +218,7 @@ def save_profile_picture(user_picture):
     picture_path = os.path.join(app.root_path, 'static/user_pictures', picture_fn)
     output_size = (125, 125)
     i = Image.open(user_picture)
+    i = ImageOps.fit(i, (125, 125), Image.ANTIALIAS)
     i.thumbnail(output_size)
     i.save(picture_path)
     return picture_fn
@@ -360,11 +363,7 @@ def view_post(pid):
     post = session.query(Post).filter_by(id=pid).one()
     return render_template("post.html", post=post)
 
-
 if __name__ == '__main__':
-    
-    db.create_all()
-    db.session.commit()
     app.run(debug=True, host='localhost', port=5000)
 
 """!!!IDEA: annons can view first page of posts (clicking on a post still 
