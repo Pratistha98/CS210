@@ -1,12 +1,8 @@
 from flask import Flask, render_template, url_for, redirect, flash, request
 from flask_bootstrap import Bootstrap
 from flask_wtf import FlaskForm
-<<<<<<< HEAD
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, ValidationError, TextAreaField
-=======
 from flask_wtf.file import FileField, FileAllowed, FileRequired
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, ValidationError
->>>>>>> ff5ebdea3141f5f62b152a91b22daa793e70fe82
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, ValidationError, TextAreaField
 from wtforms.validators import InputRequired, Email, Length, Required, EqualTo
 from flask_sqlalchemy import SQLAlchemy
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
@@ -88,20 +84,16 @@ class Post(db.Model):
     __tablename__ = "Posts"
     id = db.Column(db.Integer, primary_key=True, autoincrement = True)
     title = db.Column(db.String(50), nullable = False)
-    body = db.Column(db.String(128))
+    description = db.Column(db.String(128))
     time = db.Column(db.DateTime)
     user_id = db.Column(db.Integer, db.ForeignKey('Users.id'))
     picture = db.Column(db.String(50), nullable = True)
 
 class PostForm(FlaskForm):
     title = StringField("Title", validators=[InputRequired()])
-<<<<<<< HEAD
     description = TextAreaField("Description", validators=[InputRequired()])
-=======
-    body = StringField("Body", validators=[InputRequired()])
     picture = FileField('Picture', validators=[FileAllowed(['jpg', 'png'])])
     submit = SubmitField("Post")
->>>>>>> ff5ebdea3141f5f62b152a91b22daa793e70fe82
 
 class LoginForm(FlaskForm):
     username = StringField("Username", validators=[InputRequired(), Length(min=5, max=15)])
@@ -153,7 +145,7 @@ def login():
         return render_template("LoggedIn.html", username = username)
     form = LoginForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(username=form.username.data).first()
+        user = User.query.filter_by(username=form.username.data).firsst()
         if user is None or not check_password_hash(user.password, form.password.data):
             flash('Invalid username or password')
             return redirect(url_for('login'))
@@ -190,7 +182,7 @@ def signup():
 def create():
     form = PostForm()
     if form.validate_on_submit():
-        new_post = Post(title=form.title.data, body=form.body.data, time = datetime.now(), user_id = current_user.id)
+        new_post = Post(title=form.title.data, description=form.description.data, time = datetime.now(), user_id = current_user.id)
         if form.picture.data:
             picture_file = save_picture(form.picture.data)
             new_post.picture = picture_file
