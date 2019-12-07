@@ -58,9 +58,8 @@ class User(db.Model, UserMixin):
     password = db.Column(db.String(60), nullable=False)
     picture = db.Column(db.String(20), nullable=False, default='default.jpg')
     posts = db.relationship('Post', backref='author', lazy=True)
-    otp_secret = db.Column(db.String(16))
 
-    def __init__(self):
+    def __init__(self, **kwargs):
         if self.otp_secret is None:
             self.otp_secret = random.randint(100000, 999999)
 
@@ -140,9 +139,9 @@ def checklogin():
 @app.route('/')
 def home():
     # resets the database:
-    # db.drop_all()
-    # db.create_all()
-    # db.session.commit()
+    db.drop_all()
+    db.create_all()
+    db.session.commit()
     logged_in = checklogin()
     posts = Post.query.all()
     return render_template("Landing.html", logged_in=logged_in, posts=posts)
