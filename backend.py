@@ -107,12 +107,31 @@ class LoginForm(FlaskForm):
 
 class SignupForm(FlaskForm):
     email = StringField("Email", validators=[InputRequired(), Email(message='Invalid Email'), Length(max=50)])
-    username = StringField("Username", validators=[InputRequired(), Length(min=5, max=15)])
-    full_name = StringField("Full Name", validators=[InputRequired(), Length(min=5, max=15)])
+    username = StringField("Username", validators=[InputRequired(), Length(min=2, max=20)])
+    full_name = StringField("Full Name", validators=[InputRequired(), Length(min=5, max=35)])
     password = PasswordField("Password", validators=[InputRequired(), Length(min=8, max=128)])
     password_again = PasswordField("Confirm Password", validators=[InputRequired(), EqualTo('password')])
     picture = FileField('Picture', validators=[FileAllowed(['jpg', 'png'])])
     submit = SubmitField("SignUp")
+
+class UpdateAccountForm(FlaskForm):
+    username = StringField('Username', validators=[InputRequired(), Length(min=2, max=20)])
+    full_name = StringField("Full Name", validators=[InputRequired(), Length(min=5, max=35)])
+    email = StringField('Email', validators=[InputRequired(), Email()])
+    picture = FileField('Update Profile Picture', validators=[FileAllowed(['jpg', 'png'])])
+    submit = SubmitField('Update')
+
+    def validate_username(self, username):
+        if username.data != current_user.username:
+            user = User.query.filter_by(username=username.data).first()
+            if user:
+                raise ValidationError('That username is taken. Please choose a different one.')
+
+    def validate_email(self, email):
+        if email.data != current_user.email:
+            user = User.query.filter_by(email=email.data).first()
+            if user:
+                raise ValidationError('That email is taken. Please choose a different one.')
 
 class RequestResetForm(FlaskForm):
     email = StringField('Email', validators=[InputRequired(), Email()])
@@ -143,6 +162,35 @@ def home():
     logged_in = checklogin()
     posts = Post.query.all()
     return render_template("Landing.html", logged_in=logged_in, posts=posts)
+
+@app.route("/posts")
+def posts():
+    post = Post.query.all()
+    return render_template("posts.html")
+
+@app.route("/posts/<int:pid>")  # login required
+def view_post(pid):
+    post = Post.query.filter_by(id=pid)
+    return render_template("Blog.html", post=post)
+
+@app.route("/account", methods=['GET', 'POST'])
+@login_required
+def account():
+    form = UpdateAccountForm()
+    if form.validate_on_submit():
+        if form.picture.data:
+            picture_file = save_picture(form.picture.data)
+            current_user.image_file = picture_file
+        current_user.username = form.username.data
+        current_user.email = form.email.data
+        db.session.commit()
+        flash('Your account has been updated!', 'success')
+        return redirect(url_for('account'))
+    elif request.method == 'GET':
+        form.username.data = current_user.username
+        form.email.data = current_user.email
+    image_file = url_for('static', filename='profile_pics/' + current_user.image_file)
+    return render_template('account.html', title='Account', image_file=image_file, form=form)
 
 @app.route('/login', methods=['GET', 'POST'])  # Check if this works properly
 def login(): 
@@ -353,16 +401,6 @@ id = db.Column(db.Integer, primary_key=True, nullable = False, autoincrement = T
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     user_id
 '''
-
-@app.route("/posts")
-def posts():
-    posts = session.query(Post).all()
-    return render_template("posts.html")
-
-@app.route("/posts/<int:pid>")  # login required
-def view_post(pid):
-    post = session.query(Post).filter_by(id=pid).one()
-    return render_template("post.html", post=post)
 
 if __name__ == '__main__':
     app.run(debug=True, host='localhost', port=5000)
