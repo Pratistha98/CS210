@@ -26,7 +26,7 @@
           </svg>
           <!-- Buttons  -->
           {% if logged_in %}
-            <a href="http://localhost:5000/create"> 
+            <a href="http://localhost:5000/post/create"> 
               <div class="box-1">
               <div class="btn btn-one"> 
               <span id="new">Share UR Experience</span>
@@ -45,7 +45,7 @@
 
       <div class = "container">
         <!-- Blog cards   -->
-  <div class ="row text-center">
+  <!-- <div class ="row text-center">
     <div class ="col-md-4 col-sm-6">
       <div class = "card">        
         <a href="blog"> <img class ="card-img" src="/static/images/Library.jpg">
@@ -97,5 +97,11 @@
       </div>
           </div>
       </div>
-    </div>
+    </div> -->
+    {% for post in posts %}
+        {{ post.author.username }}
+        {{ post.time.strftime('%Y-%m-%d') }}
+        {{ post.title }}
+        {{ post.description }}
+    {% endfor %}
 {% endblock %}
