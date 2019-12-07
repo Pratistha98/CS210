@@ -5,7 +5,6 @@ from flask_wtf.file import FileField, FileAllowed, FileRequired
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, ValidationError
 from wtforms.validators import InputRequired, Email, Length, Required, EqualTo
 from flask_sqlalchemy import SQLAlchemy
-# from sqlalchemy_imageattach.entity import Image, image_attachment
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import current_user, login_user, logout_user
