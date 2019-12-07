@@ -1,0 +1,39 @@
+{% import "bootstrap/wtf.html" as wtf %}
+{%  extends "Header.html" %}
+{% block content %}
+<html>
+    <body class="body-create">
+        <div class="container">
+                <div id = "create">
+                        <form action ="/create" method ="post" id="blogform" enctype="multipart/form-data">
+                            <h1 class="header-login-signup" style="text-align: center"> Edit UR Profile</h1>
+    
+                            <div class="form-group">
+                                <label for="Title"> UserName </label>
+                                <input type="text" class="form-control" id="formGroupExampleInput" name ="UserName" placeholder="UserName">
+							</div>
+							<div class="form-group">
+                                <label for="Title"> FullName </label>
+                                <input type="text" class="form-control" id="formGroupExampleInput" name ="FullName" placeholder="FullName">
+							</div>
+							<div class="form-group">
+                                <label for="Title"> Class Year </label>
+                                <input type="text" class="form-control" id="formGroupExampleInput" name ="Class Year" placeholder="Class Year">
+                            </div>
+                            <div class="form-group">
+                                <label for="Bio">Bio</label>
+                                <textarea class="form-control" id="textarea" rows="15"></textarea>
+                            </div>
+                            <div class = "form-group">
+                                <label for="Image">Image</label>
+                                <input type="text" class="form-control" id="formGroupExampleInput2" name = "image" placeholder="Image">
+							</div>
+                            <div>
+                                <button class ="btn btn-light btn-block btn-lg" id = "startBtn">Submit</button> 
+                            </div>
+                        </form>
+                </div>
+        </div> 
+    </body>
+</html>
+{% endblock %}
