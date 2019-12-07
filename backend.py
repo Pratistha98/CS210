@@ -1,12 +1,9 @@
 from flask import Flask, render_template, url_for, redirect, flash, request
 from flask_bootstrap import Bootstrap
 from flask_wtf import FlaskForm
-<<<<<<< HEAD
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, ValidationError, TextAreaField
-=======
 from flask_wtf.file import FileField, FileAllowed, FileRequired
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, ValidationError
->>>>>>> ff5ebdea3141f5f62b152a91b22daa793e70fe82
 from wtforms.validators import InputRequired, Email, Length, Required, EqualTo
 from flask_sqlalchemy import SQLAlchemy
 # from sqlalchemy_imageattach.entity import Image, image_attachment
@@ -96,13 +93,10 @@ class Post(db.Model):
 
 class PostForm(FlaskForm):
     title = StringField("Title", validators=[InputRequired()])
-<<<<<<< HEAD
-    description = TextAreaField("Description", validators=[InputRequired()])
-=======
     body = StringField("Body", validators=[InputRequired()])
     picture = FileField('Picture', validators=[FileAllowed(['jpg', 'png'])])
     submit = SubmitField("Post")
->>>>>>> ff5ebdea3141f5f62b152a91b22daa793e70fe82
+
 
 class LoginForm(FlaskForm):
     username = StringField("Username", validators=[InputRequired(), Length(min=5, max=15)])

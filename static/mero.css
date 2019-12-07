@@ -407,7 +407,7 @@ The following code is for the styling specific to the login page
 **/
 .body-login {
   background-image: url("images/Campus.jpg");
-  background-repeat: no-repeat;
+  background-repeat: repeat;
   background-size: cover;
 }
 
