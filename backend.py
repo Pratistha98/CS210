@@ -251,7 +251,11 @@ def save_profile_picture(user_picture):
     i.thumbnail(output_size)
     i.save(picture_path)
     return picture_fn
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> 542795a1c6e9782d8de43a991855f23af48e976f
 #----------------------------------------------------------------------------------------------
 #Forgot Password
 def send_reset_email(user):
@@ -340,6 +344,14 @@ def logout():
 def profile():
     logged_in = checklogin
     return render_template("Profile.html", logged_in=logged_in)
+
+@app.route("/Editprofile")
+def edit():
+    return render_template("EditProfile.html")
+
+@app.route("/EditPost")
+def EditPost():
+    return render_template("EditPost.html")
 
 """!!!IDEA: annons can view first page of posts (clicking on a post still 
    forces you to login). When the user clicks to access the second+ page, 
