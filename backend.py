@@ -59,9 +59,6 @@ class User(db.Model, UserMixin):
     picture = db.Column(db.String(20), nullable=False, default='default.jpg')
     posts = db.relationship('Post', backref='author', lazy=True)
 
-    def __init__(self, **kwargs):
-        if self.otp_secret is None:
-            self.otp_secret = random.randint(100000, 999999)
 
 class Post(db.Model):
     __tablename__ = "Posts"
@@ -139,9 +136,9 @@ def checklogin():
 @app.route('/')
 def home():
     # resets the database:
-    db.drop_all()
-    db.create_all()
-    db.session.commit()
+    # db.drop_all()
+    # db.create_all()
+    # db.session.commit()
     logged_in = checklogin()
     posts = Post.query.all()
     return render_template("Landing.html", logged_in=logged_in, posts=posts)
@@ -188,8 +185,8 @@ def login():
             return redirect(url_for('login'))
         if user:
             if check_password_hash(user.password, form.password.data):
-                login_user(user, remember=form.remember_me.data)
-                return (redirect(url_for('home')))  # make sure redirect is correct
+                # login_user(user, remember=form.remember_me.data)
+                return redirect(url_for('otp_request', username=user.username))  # make sure redirect is correct
         #error = 'Invalid credentials'
     logged_in = checklogin()   
     return render_template("Login.html", form=form, logged_in=logged_in)  # Update with proper html file
@@ -214,7 +211,7 @@ def signup():
         db.session.add(new_user)
         db.session.commit()
         session['username'] = new_user.username
-        return redirect(url_for('two_factor_setup'))    #redirecting for two factor authentication
+        return redirect(url_for('login'))    #redirecting for two factor authentication
     logged_in = checklogin()   
     return render_template("SignUp.html", form=form, logged_in=logged_in)  
 
@@ -254,10 +251,7 @@ def save_profile_picture(user_picture):
     i.thumbnail(output_size)
     i.save(picture_path)
     return picture_fn
-    
-@app.route("/Editprofile")
-def edit():
-    return render_template("EditProfile.html")
+
 #----------------------------------------------------------------------------------------------
 #Forgot Password
 def send_reset_email(user):
@@ -302,26 +296,31 @@ def reset_token(token):
 #----------------------------------------------------------------------------------------------
 #2fa    
 
-def send_authorization_email(user):
-    token = user.get_reset_token()
-    msg = Message('OTP for Login', sender='noreply@210project.com', recipients=[user.email])
-    msg.body = '''Your 6 digit One Time Password is:''' + str(user.otp_secret)
+def send_authorization_email(email, otp_secret):
+    msg = Message('OTP for Login', sender='noreply@210project.com', recipients=[email])
+    msg.body = '''Your 6 digit One Time Password is:''' + otp_secret
     mail.send(msg)
 
-@app.route('/otp', methods=['GET', 'POST'])
-def otp_request():
+list = []
+@app.route('/otp/<string:username>', methods=['GET', 'POST'])
+def otp_request(username):
+    email = User.query.filter_by(username=username).first().email
     form = OTPForm()
-    if current_user.is_authenticated:
-        user = current_user
-    send_authorization_email(user)
-    if form.validate_on_submit():
-        otp = form.otp.data()
-        if otp == user.otp_secret:
-            redirect('/')
-        else:
-            flash('Invalid OTP. Check your email again')
-            send_authorization_email(user)
-            return render_template("two-factor-setup.html", form=form, logged_in=logged_in)
+    otp_secret = str(random.randint(100000, 999999))
+    list.append(otp_secret)
+    if request.method == 'GET':
+        send_authorization_email(email, otp_secret)
+        return render_template('two-factor-setup.html', form=form, username=username)
+    else:
+        if form.validate_on_submit():
+            otp = form.otp.data
+            if otp == list[0]:
+                login_user(User.query.filter_by(email=email).first())
+                return redirect(url_for('home'))
+            else:
+                flash('Invalid OTP. Check your email again')
+                logged_in = checklogin()
+                return redirect(url_for('login', form=form, logged_in=logged_in))
 
 
 #--------------------------------------------------------------------------------------------------
