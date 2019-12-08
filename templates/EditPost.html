@@ -1,0 +1,30 @@
+{% import "bootstrap/wtf.html" as wtf %}
+{%  extends "Header.html" %}
+{% block content %} 
+    <html>
+        <body class="body-create">
+            <div class="container">
+                    <div id = "create">
+                            <form action ="/create" method ="post" id="blogform" enctype="multipart/form-data">
+                                <h1 class="header-login-signup" style="text-align: center"> Edit UR Blog</h1>
+                                <div class="form-group">
+                                    <label for="Title"> Title </label>
+                                    <input type="text" class="form-control" id="formGroupExampleInput" name ="Title" placeholder="Title">
+                                </div>
+                                <div class="form-group">
+                                    <label for="Description">Description</label>
+                                    <textarea class="form-control" id="textarea" rows="30"></textarea>
+                                </div>
+                                <div class = "form-group">
+                                    <label for="Image">Image</label>
+                                    <input type="text" class="form-control" id="formGroupExampleInput2" name = "image" placeholder="Image">
+                                </div>
+                                <div>
+                                    <button class ="btn btn-light btn-block btn-lg" id = "startBtn">Submit</button>
+                                </div>
+                            </form>
+                    </div>
+            </div> 
+        </body>
+    </html>
+    {% endblock %}

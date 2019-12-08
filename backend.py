@@ -275,6 +275,10 @@ def save_profile_picture(user_picture):
 @app.route("/Editprofile")
 def edit():
     return render_template("EditProfile.html")
+
+@app.route("/EditPost")
+def EditPost():
+    return render_template("EditPost.html")
 #----------------------------------------------------------------------------------------------
 #Forgot Password
 def send_reset_email(user):
