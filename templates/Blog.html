@@ -3,12 +3,13 @@
 <body>
 	<div class="col-md-12">
 		<div class="card">
-			<img class ="card-img-top" src="/static/images/Campus.jpg" >
+			<img class ="card-img-top" src="/static/post_pictures/{{post.picture}}" >
 			<div class="card-body">
 				<div class="container">
 					<div class="jumbotron-blog">
 						<h1>{{ post.title }}</h1>
-						<h5>By: {{ post.author.username }}</h5>
+						<h5>By: {{ post.author.username }}   ({{ post.time.strftime('%Y-%m-%d') }}) </h5>
+						
 						<p>{{ post.description }}</p>
 						<div class="container h-100">
 							<div class="d-flex h-100">
