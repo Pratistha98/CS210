@@ -251,6 +251,7 @@ def save_profile_picture(user_picture):
     i.thumbnail(output_size)
     i.save(picture_path)
     return picture_fn
+
 #----------------------------------------------------------------------------------------------
 #Forgot Password
 def send_reset_email(user):
