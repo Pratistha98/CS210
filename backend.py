@@ -110,8 +110,8 @@ class UpdateAccountForm(FlaskForm):
                 raise ValidationError('That email is taken. Please choose a different one.')
 
 class RequestResetForm(FlaskForm):
-    email = StringField('Email', validators=[InputRequired(), Email()])
-    submit = SubmitField('Request Password Reset')
+    email = StringField('Please Enter your Email', validators=[InputRequired(), Email()])
+    submit = SubmitField('Request')
 
     def validate_email(self, email):
         user = User.query.filter_by(email=email.data).first()
