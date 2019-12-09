@@ -6,9 +6,14 @@
 			<img class ="card-img-top" src="/static/post_pictures/{{post.picture}}" >
 			<div class="card card-body bg-light">
 				<div class="container">
-						<div class="row">		
-						<h1>{{ post.title }}</h1>			
-						<h5>By: {{ post.author.username }}   ({{ post.time.strftime('%Y-%m-%d') }}) </h5>
+						<div class="row" >		
+						<h1>{{post.title}}</h1>		
+						</div>
+						<div class = "row">
+							<h5>By: {{ post.author.username }}   ({{ post.time.strftime('%Y-%m-%d') }}) </h5>
+						</div>
+						
+						<div class = "row">
 							<div class = "align-self-end ml-auto">
 							<figure class="figure">
 								<a href="#"><img src="https://img.icons8.com/material-sharp/30/000000/edit.png" hspace="15" style="float:right"> </a>
