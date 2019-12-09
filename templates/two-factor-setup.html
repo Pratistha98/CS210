@@ -8,7 +8,7 @@
             <div class ="container">
                 <div class="jumbotron">
                         <form action="/otp/{{username}}" method ="Post">
-                            <h1 class="header-login-signup" style="text-align: center">LOGIN</h1>
+                            <h1 class="header-login-signup" style="text-align: center">Enter Security Code</h1>
                                 {% if error %}
                                     <p class=error><strong>Error:</strong> {{ error }}
                                 {% endif %}
@@ -26,16 +26,18 @@
                             {{ form.csrf_token }}    
 
                             <div class="form-group">
-                                {{wtf.form_field(form.otp)}}	
+                                {{wtf.form_field(form.otp)}}    
                                 <!-- <input type="password" class="form-control" id="formGroupExampleInput2" name = "password" placeholder="Password"> -->
                             </div>
                             
                             <div class="form-group">
-                                {{form.submit()}}
+                                    {{wtf.form_field(form.submit ,class ="btn btn-light btn-block btn-lg", id = "startBtn")}}
+                            </br>
                                 <!-- <button class="btn btn-light btn-block" id = "startBtn" style="text-align: center;">Submit</button> -->
-
-                            <a href = "http://localhost:5000/">Go Back</a>	
-                            
+                                <div style="text-align:center">
+                                        <a href="http://localhost:5000/">Go Back</a>​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​
+                                      </div>
+                                    </div>
                         </form>
                 </div>
             </div>
@@ -43,5 +45,6 @@
     </body>
 </html>
 {% endblock %}
+
 
 
