@@ -4,42 +4,35 @@
 	<div class="col-md-12">
 		<div class="card">
 			<img class ="card-img-top" src="/static/post_pictures/{{post.picture}}" >
-			<div class="card-body">
+			<div class="card card-body bg-light">
 				<div class="container">
-					<div class="jumbotron-blog">
-						<h1>{{ post.title }}</h1>
+						<div class="row">		
+						<h1>{{ post.title }}</h1>			
 						<h5>By: {{ post.author.username }}   ({{ post.time.strftime('%Y-%m-%d') }}) </h5>
-						
-						<p>{{ post.description }}</p>
-						<div class="container h-100">
-							<div class="d-flex h-100">
-								<div class="align-self-end ml-auto btn-group-vertical">
+							<div class = "align-self-end ml-auto">
+							<figure class="figure">
+								<a href="#"><img src="https://img.icons8.com/material-sharp/30/000000/edit.png" hspace="15" style="float:right"> </a>
+								<figcaption class="figure-caption text-center"> Edit</figcaption>
+							  </figure>
+	
+							  <figure class="figure">
+								<a href="#"> <img src="https://img.icons8.com/material-rounded/30/000000/filled-trash.png"></a>
+								<figcaption class="figure-caption text-center"> Delete</figcaption>
+							  </figure> 
+							  <figure class="figure">
+									<a href="#"><img src="https://img.icons8.com/material-rounded/30/000000/star.png" hspace="20"> </a>
+									<figcaption class="figure-caption text-center">Like</figcaption>
+								  </figure>
 
-									<figure class="figure">
-										<a href="http://localhost:5000/EditPost"><img src="https://img.icons8.com/material-sharp/30/000000/edit.png" hspace="20"> </a>
-										<figcaption class="figure-caption text-center"> Edit</figcaption>
-									  </figure>
-
-					  				<figure class="figure">
-										<a href="#"> <img src="https://img.icons8.com/material-rounded/30/000000/filled-trash.png" hspace="20"></a>
-										<figcaption class="figure-caption text-center"> Delete</figcaption>
-									  </figure>
-
-					  				<figure class="figure">
-										<a href="#"><img src="https://img.icons8.com/material-rounded/30/000000/star.png" hspace="20"> </a>
-										<figcaption class="figure-caption text-center">Like</figcaption>
-									  </figure>
-
-					  				<figure class="figure">
-										<a href="#"><img src="https://img.icons8.com/material-rounded/30/000000/comments.png" hspace="20"> </a>
-										<figcaption class="figure-caption text-center">Comment</figcaption>
-									  </figure>
-
-								</div>
+								  <figure class="figure">
+									<a href="#"><img src="https://img.icons8.com/material-rounded/30/000000/comments.png" hspace="20"> </a>
+									<figcaption class="figure-caption text-center">Comment</figcaption>
+								  </figure>
 							</div>
+						<p>{{ post.description }}</p>
 						</div>
 
-						<hr class="my-8">
+						<hr class="my-10">
 						<div class = "card card-body bg-light">
 							<div class = "row">
 								<div class = "cold-md-9">
