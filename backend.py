@@ -124,8 +124,8 @@ class ResetPasswordForm(FlaskForm):
     submit = SubmitField('Reset Password')
 
 class OTPForm(FlaskForm):
-    otp = StringField("OTP", validators=[InputRequired(), Length(min=6, max=6)])
-    submit = SubmitField("LogIn")
+    otp = StringField("Please enter the code that was sent in your email", validators=[InputRequired(), Length(min=6, max=6)])
+    submit = SubmitField("Continue")
 
 def checklogin():
     if current_user.is_authenticated:
