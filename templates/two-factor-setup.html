@@ -14,11 +14,12 @@
                                 {% endif %}
                                 {% with messages = get_flashed_messages() %}
                                     {% if messages %}
-                                        <ul class=flashes>
-                                        {% for message in messages %}
-                                            <li>{{ message }}</li>
-                                        {% endfor %}
-                                        </ul>
+                                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                                {% for message in messages %}
+                                                    <ul> {{ message }}</ul>
+                                                {% endfor %}
+                                            </div>
+
                                     {% endif %}
                                 {% endwith %}
 

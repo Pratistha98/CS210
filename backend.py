@@ -181,7 +181,7 @@ def login():
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
         if user is None or not check_password_hash(user.password, form.password.data):
-            flash('Invalid username or password')
+            flash('Invalid username or password', 'error')
             return redirect(url_for('login'))
         if user:
             if check_password_hash(user.password, form.password.data):

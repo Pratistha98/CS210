@@ -10,15 +10,15 @@
                         <form action="/login" method ="Post">
                             <h1 class="header-login-signup" style="text-align: center">LOGIN</h1>
                                 {% if error %}
-                                    <p class=error><strong>Error:</strong> {{ error }}
+                                    <p class=error><strong>Error:</strong> {{ error }} </p>
                                 {% endif %}
                                 {% with messages = get_flashed_messages() %}
                                     {% if messages %}
-                                        <ul class=flashes>
+                                   <div class="alert alert-danger alert-dismissible fade show" role="alert">
                                         {% for message in messages %}
-                                            <li>{{ message }}</li>
+                                            <ul> {{ message }}</ul>
                                         {% endfor %}
-                                        </ul>
+                                    </div>
                                     {% endif %}
                                 {% endwith %}
 
