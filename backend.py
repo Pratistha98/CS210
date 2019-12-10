@@ -85,7 +85,6 @@ class CommentForm(FlaskForm):
     body = StringField("Body", validators=[DataRequired()])
     submit = SubmitField("Post")
 
-
 class PostForm(FlaskForm):
     title = StringField("Title", validators=[InputRequired()])
     description = TextAreaField("Description", validators=[InputRequired()])
@@ -167,12 +166,18 @@ def posts():
     post = Post.query.all()
     return render_template("posts.html")
 
-@app.route("/posts/<int:pid>", methods=["GET", "POST"])  # login required
+@app.route("/posts/<int:pid>")  # login required
 def view_post(pid):
     post = Post.query.filter_by(id=pid).first()
-    print('this is the one')
+    logged_in = checklogin()
+    return render_template("Blog.html", post=post, logged_in=logged_in, pid=pid)
+
+@app.route("/comment/<int:pid>", methods=["GET", "POST"])
+def add(pid):
     form = CommentForm()
+    post = Post.query.filter_by(id=pid).first()
     if form.validate_on_submit():
+        print ("hit")
         comment = Comment(body=form.body.data, article=post.id)
         db.session.add(comment)
         db.session.commit()
@@ -180,6 +185,8 @@ def view_post(pid):
         return redirect(url_for("post", post_id=post.id))
     return render_template("Blog.html", post=post)
 
+        return redirect(url_for(view_post(pid)))
+    return render_template("Comment.html", form=form, pid=pid)
 
 # @app.route("/post/<int:post_id>/comment", methods=["GET", "POST"])
 # @login_required
@@ -224,7 +231,7 @@ def account():
 @login_required
 def comment_post(post_id):
     post = Post.query.get_or_404(post_id)
-    form = CommentFrom()
+    form = CommentForm()
     if form.validate_on_submit():
         comment = Comment(body=form.body.data, article=post.id)
         db.session.add(comment)
@@ -286,6 +293,8 @@ def create():
         if form.picture.data:
             picture_file = save_picture(form.picture.data)
             new_post.picture = picture_file
+        else:
+            new_post.picture = "default.jpg"
         db.session.add(new_post)
         db.session.commit()
         logged_in = checklogin()

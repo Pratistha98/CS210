@@ -1,0 +1,22 @@
+{% import "bootstrap/wtf.html" as wtf %}
+{%  extends "Header.html" %}
+{% block content %}
+<html>
+    <body class="body-login">
+        <div class="container">
+            <div class ="container">
+                {{form.hidden_tag()}}
+                {{ form.csrf_token }}
+                <div class="jumbotron">
+                        <form action="/posts/{{pid}}" method ="Post">
+                            {{wtf.form_field(form.body)}}
+                            {{wtf.form_field(form.submit)}}
+                        </form>
+                </div>
+            </div>
+        </div>  
+    </body>
+</html>
+{% endblock %}
+
+
