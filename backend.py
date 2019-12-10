@@ -136,9 +136,9 @@ def checklogin():
 @app.route('/')
 def home():
     # resets the database:
-    db.drop_all()
-    db.create_all()
-    db.session.commit()
+    # db.drop_all()
+    # db.create_all()
+    # db.session.commit()
     logged_in = checklogin()
     posts = Post.query.all()
     return render_template("Landing.html", logged_in=logged_in, posts=posts)
