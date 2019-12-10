@@ -161,7 +161,6 @@ def home():
     posts = Post.query.all()
     return render_template("Landing.html", logged_in=logged_in, posts=posts)
 
-<<<<<<< HEAD
 @app.route("/posts")
 def posts():
     post = Post.query.all()
@@ -179,8 +178,9 @@ def view_post(pid):
         flash("Your comment has been added to the post")
         return redirect(url_for("post", post_id=post.id))
     return render_template("Blog.html", post=post)
+
 @app.route("/posts/<int:pid>")  # login required
-def view_post(pid):
+def view_post1(pid):
     post = Post.query.filter_by(id=pid).first()
     logged_in = checklogin()
     return render_template("Blog.html", post=post, logged_in=logged_in)
@@ -228,7 +228,7 @@ def account():
 @login_required
 def comment_post(post_id):
     post = Post.query.get_or_404(post_id)
-    form = CommentFrom()
+    form = CommentForm()
     if form.validate_on_submit():
         comment = Comment(body=form.body.data, article=post.id)
         db.session.add(comment)
@@ -290,6 +290,8 @@ def create():
         if form.picture.data:
             picture_file = save_picture(form.picture.data)
             new_post.picture = picture_file
+        else:
+            new_post.picture = "default.jpg"
         db.session.add(new_post)
         db.session.commit()
         logged_in = checklogin()
