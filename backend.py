@@ -4,7 +4,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, ValidationError, TextAreaField
 from flask_wtf.file import FileField, FileAllowed, FileRequired
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, ValidationError
-from wtforms.validators import InputRequired, Email, Length, Required, EqualTo
+from wtforms.validators import InputRequired, Email, Length, Required, EqualTo, DataRequired
 from flask_sqlalchemy import SQLAlchemy
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -60,6 +60,7 @@ class User(db.Model, UserMixin):
     posts = db.relationship('Post', backref='author', lazy=True)
 
 
+
 class Post(db.Model):
     __tablename__ = "Posts"
     id = db.Column(db.Integer, primary_key=True, autoincrement = True)
@@ -68,6 +69,19 @@ class Post(db.Model):
     time = db.Column(db.DateTime)
     user_id = db.Column(db.Integer, db.ForeignKey('Users.id'), nullable=False)
     picture = db.Column(db.String(50), nullable = True)
+    comments = db.relationship("Comment", backref="comment", lazy = True)
+
+class Comment(db.Model):
+    __tablename__ = "Comments"
+    id = db.Column(db.Integer, primary_key=True)
+    text = db.Column(db.String(140))
+    author = db.Column(db.String(32))
+    post_id = db.Column(db.Integer, db.ForeignKey('Posts.id'))
+
+class CommentForm(FlaskForm):
+    body = StringField("Body", validators=[DataRequired()])
+    submit = SubmitField("Post")
+
 
 class PostForm(FlaskForm):
     title = StringField("Title", validators=[InputRequired()])
@@ -148,10 +162,31 @@ def posts():
     post = Post.query.all()
     return render_template("posts.html")
 
-@app.route("/posts/<int:pid>")  # login required
+@app.route("/posts/<int:pid>", methods=["GET", "POST"])  # login required
 def view_post(pid):
     post = Post.query.filter_by(id=pid).first()
+    print('this is the one')
+    form = CommentForm()
+    if form.validate_on_submit():
+        comment = Comment(body=form.body.data, article=post.id)
+        db.session.add(comment)
+        db.session.commit()
+        flash("Your comment has been added to the post")
+        return redirect(url_for("post", post_id=post.id))
     return render_template("Blog.html", post=post)
+
+# @app.route("/post/<int:post_id>/comment", methods=["GET", "POST"])
+# @login_required
+# def comment_post(post_id):
+#     post = Post.query.get_or_404(post_id)
+#     form = CommentForm()
+#     if form.validate_on_submit():
+#         comment = Comment(body=form.body.data, article=post.id)
+#         db.session.add(comment)
+#         db.session.commit()
+#         flash("Your comment has been added to the post")
+#         return redirect(url_for("post", post_id=post.id))
+#     return render_template("comment_post.html", title="Comment Post", form=form)
 
 @app.route("/account", methods=['GET', 'POST'])
 @login_required
@@ -171,6 +206,19 @@ def account():
         form.email.data = current_user.email
     picture = url_for('static', filename='user_pictures/' + current_user.picture)
     return render_template('account.html', title='Account', picture=picture, form=form)
+
+@app.route("/post/<int:post_id>/comment", methods=["GET", "POST"])
+@login_required
+def comment_post(post_id):
+    post = Post.query.get_or_404(post_id)
+    form = CommentFrom()
+    if form.validate_on_submit():
+        comment = Comment(body=form.body.data, article=post.id)
+        db.session.add(comment)
+        db.session.commit()
+        flash("Your comment has been added to the post")
+        return redirect(url_for("post", post_id=post.id))
+    return render_template("comment_post.html", title="Comment Post", form=form)
 
 @app.route('/login', methods=['GET', 'POST'])  # Check if this works properly
 def login(): 

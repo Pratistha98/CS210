@@ -43,6 +43,11 @@
 								<div class = "cold-md-9">
 									<p style="text-align: left"><strong> Comment username</strong></p>
 									<p> THis is my Comment.THis is my Comment.THis is my Comment. </p>
+									{% for comment in post.comments %}
+       								 		<p>{{ comment.text }}</p>
+
+									{% endfor %}
+
 									</div>
 									<div class = "align-self-end ml-auto">
 									<figure class="figure">
