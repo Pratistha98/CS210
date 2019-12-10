@@ -166,7 +166,7 @@ def posts():
     post = Post.query.all()
     return render_template("posts.html")
 
-@app.route("/posts/<int:pid>")  # login required
+@app.route("/posts/<int:pid>", methods=["GET", "POST"])  # login required
 def view_post(pid):
     post = Post.query.filter_by(id=pid).first()
     logged_in = checklogin()
