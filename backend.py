@@ -58,8 +58,10 @@ class User(db.Model, UserMixin):
     password = db.Column(db.String(60), nullable=False)
     picture = db.Column(db.String(20), nullable=False, default='default.jpg')
     posts = db.relationship('Post', backref='author', lazy=True)
+    otp_secret = str(random.randint(100000, 999999))
 
-
+    def change_otp(self):
+        self.otp_secret = str(random.randint(100000, 999999))
 
 class Post(db.Model):
     __tablename__ = "Posts"
@@ -70,6 +72,7 @@ class Post(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('Users.id'), nullable=False)
     picture = db.Column(db.String(50), nullable = True)
     comments = db.relationship("Comment", backref="comment", lazy = True)
+
 
 class Comment(db.Model):
     __tablename__ = "Comments"
@@ -349,24 +352,31 @@ def send_authorization_email(email, otp_secret):
     msg.body = '''Your 6 digit One Time Password is:''' + otp_secret
     mail.send(msg)
 
-list = []
+# list = []
+# otp_secret = str(random.randint(100000, 999999))
+
 @app.route('/otp/<string:username>', methods=['GET', 'POST'])
 def otp_request(username):
     email = User.query.filter_by(username=username).first().email
+    user = User.query.filter_by(username=username).first()
     form = OTPForm()
-    otp_secret = str(random.randint(100000, 999999))
-    list.append(otp_secret)
+    # n = 0
+    # list.append(otp_secret)
     if request.method == 'GET':
-        send_authorization_email(email, otp_secret)
+        send_authorization_email(email, user.otp_secret)
         return render_template('two-factor-setup.html', form=form, username=username)
-    else:
+    elif request.method == 'POST':
         if form.validate_on_submit():
             otp = form.otp.data
-            if otp == list[0]:
+            print(otp)
+            print(user.otp_secret)
+            if otp == user.otp_secret:
+                # n = n + 1
                 login_user(User.query.filter_by(email=email).first())
                 return redirect(url_for('home'))
             else:
                 flash('Invalid OTP. Check your email again')
+                user.otp_secret = str(random.randint(100000, 999999))
                 logged_in = checklogin()
                 return redirect(url_for('login', form=form, logged_in=logged_in))
 
