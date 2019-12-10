@@ -57,10 +57,11 @@ class User(db.Model, UserMixin):
     password = db.Column(db.String(60), nullable=False)
     picture = db.Column(db.String(20), nullable=False, default='default.jpg')
     posts = db.relationship('Post', backref='author', lazy=True)
-    otp_secret = str(random.randint(100000, 999999))
+    otp_secret = random.randint(100000, 999999)
 
     def change_otp(self):
-        self.otp_secret = str(random.randint(100000, 999999))
+        self.otp_secret = random.randint(100000, 999999)
+        return User
 
 class Post(db.Model):
     __tablename__ = "Posts"
@@ -161,7 +162,6 @@ def home():
     posts = Post.query.all()
     return render_template("Landing.html", logged_in=logged_in, posts=posts)
 
-<<<<<<< HEAD
 @app.route("/posts")
 def posts():
     post = Post.query.all()
@@ -179,11 +179,7 @@ def view_post(pid):
         flash("Your comment has been added to the post")
         return redirect(url_for("post", post_id=post.id))
     return render_template("Blog.html", post=post)
-@app.route("/posts/<int:pid>")  # login required
-def view_post(pid):
-    post = Post.query.filter_by(id=pid).first()
-    logged_in = checklogin()
-    return render_template("Blog.html", post=post, logged_in=logged_in)
+
 
 # @app.route("/post/<int:post_id>/comment", methods=["GET", "POST"])
 # @login_required
@@ -355,7 +351,7 @@ def reset_token(token):
 
 def send_authorization_email(email, otp_secret):
     msg = Message('OTP for Login', sender='noreply@210project.com', recipients=[email])
-    msg.body = '''Your 6 digit One Time Password is:''' + otp_secret
+    msg.body = '''Your 6 digit One Time Password is:''' + str(otp_secret)
     mail.send(msg)
 
 # list = []
@@ -376,15 +372,15 @@ def otp_request(username):
             otp = form.otp.data
             print(otp)
             print(user.otp_secret)
-            if otp == user.otp_secret:
+            if int(otp) == user.otp_secret:
                 # n = n + 1
                 login_user(User.query.filter_by(email=email).first())
                 return redirect(url_for('home'))
             else:
                 flash('Invalid OTP. Check your email again')
-                user.otp_secret = str(random.randint(100000, 999999))
+                user.otp_secret = random.randint(100000, 999999)
                 logged_in = checklogin()
-                return redirect(url_for('login', form=form, logged_in=logged_in))
+                return redirect(url_for('login', logged_in=logged_in, form=LoginForm))
 
 @app.route('/blog')
 def Blog():
