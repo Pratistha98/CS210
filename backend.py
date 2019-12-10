@@ -359,9 +359,6 @@ def send_authorization_email(email, otp_secret):
     msg.body = '''Your 6 digit One Time Password is:''' + str(otp_secret)
     mail.send(msg)
 
-# list = []
-otp_secret = str(random.randint(100000, 999999))
-
 @app.route('/sendotp/<string:username>')
 def sendotp(username):
     otp_secret = str(random.randint(100000,999999))
