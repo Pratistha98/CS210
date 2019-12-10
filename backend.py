@@ -73,8 +73,8 @@ class Post(db.Model):
 class Comment(db.Model):
     __tablename__ = "Comments"
     id = db.Column(db.Integer, primary_key=True)
-    text = db.Column(db.String(140))
-    author = db.Column(db.String(32))
+    text = db.Column(db.String(400))
+    # author = db.Column(db.String(32))
     post_id = db.Column(db.Integer, db.ForeignKey('Posts.id'))
 
 class CommentForm(FlaskForm):
@@ -174,13 +174,10 @@ def add(pid):
     post = Post.query.filter_by(id=pid).first()
     if form.validate_on_submit():
         print ("hit")
-        comment = Comment(body=form.body.data, article=post.id)
+        comment = Comment(text=form.body.data, post_id=post.id)
         db.session.add(comment)
         db.session.commit()
         flash("Your comment has been added to the post")
-     #   return redirect(url_for("post", post_id=post.id))
-    #return render_template("Blog.html", post=post)
-
         return redirect(url_for(view_post(pid)))
     return render_template("Comment.html", form=form, pid=pid)
 
@@ -223,18 +220,6 @@ def account():
     logged_in = checklogin()
     return render_template('EditProfile.html', picture=picture, form=form, logged_in=logged_in)
 
-@app.route("/post/<int:post_id>/comment", methods=["GET", "POST"])
-@login_required
-def comment_post(post_id):
-    post = Post.query.get_or_404(post_id)
-    form = CommentForm()
-    if form.validate_on_submit():
-        comment = Comment(body=form.body.data, article=post.id)
-        db.session.add(comment)
-        db.session.commit()
-        flash("Your comment has been added to the post")
-        return redirect(url_for("post", post_id=post.id))
-    return render_template("comment_post.html", title="Comment Post", form=form)
 
 @app.route('/login', methods=['GET', 'POST'])  # Check if this works properly
 def login(): 
