@@ -1,6 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <style>
+    #nav_img{
+      height: 25px;
+      width: 25px;
+    }
+  </style>
   <meta charset="UTF-8">
   <title>UR BLOG</title>
 	<link rel="stylesheet" href="/static/mero.css">
@@ -30,7 +36,7 @@
         {% if logged_in %}
           <a class="nav-link" href="http://localhost:5000/">Home</a>
           <a class="nav-link" href="http://localhost:5000/logout">Logout</a>
-          <a class="nav-link" href="http://localhost:5000/profile"><img src="/static/user_pictures/{{current_user.picture}}"></a>
+          <a class="nav-link" href="http://localhost:5000/profile"><img src="/static/user_pictures/{{current_user.picture}}" id="nav_img"></a>
         {% else %}
           <a class="nav-link" href="http://localhost:5000/">Home</a>
           <a class="nav-link" href="http://localhost:5000/login">Login</a> 
@@ -45,7 +51,7 @@
         {% if logged_in %}
         <a class="nav-link" href="http://localhost:5000/">Home</a>
         <a class="nav-link" href="http://localhost:5000/logout">Logout</a>
-        <a class="nav-link" href="http://localhost:5000/profile"><img src="/static/user_pictures/{{current_user.picture}}"></a>
+        <a class="nav-link" href="http://localhost:5000/profile"><img src="/static/user_pictures/{{current_user.picture}}" id="nav_img"></a>
       {% else %}
         <a class="nav-link" href="http://localhost:5000/">Home</a>
         <a class="nav-link" href="http://localhost:5000/login">Login</a> 
