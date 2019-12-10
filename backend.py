@@ -55,13 +55,9 @@ class User(db.Model, UserMixin):
     bio = db.Column(db.String(1024))
     class_year = db.Column(db.String(10))
     password = db.Column(db.String(60), nullable=False)
+    otp_secret = db.Column(db.Integer, nullable=True)
     picture = db.Column(db.String(20), nullable=False, default='default.jpg')
     posts = db.relationship('Post', backref='author', lazy=True)
-    otp_secret = random.randint(100000, 999999)
-
-    def change_otp(self):
-        self.otp_secret = random.randint(100000, 999999)
-        return User
 
 class Post(db.Model):
     __tablename__ = "Posts"
@@ -255,7 +251,7 @@ def login():
         if user:
             if check_password_hash(user.password, form.password.data):
                 # login_user(user, remember=form.remember_me.data)
-                return redirect(url_for('otp_request', username=user.username))  # make sure redirect is correct
+                return redirect(url_for('sendotp', username=user.username))  # make sure redirect is correct
         #error = 'Invalid credentials'
     logged_in = checklogin()   
     return render_template("Login.html", form=form, logged_in=logged_in)  # Update with proper html file
@@ -364,30 +360,33 @@ def send_authorization_email(email, otp_secret):
     mail.send(msg)
 
 # list = []
-# otp_secret = str(random.randint(100000, 999999))
+otp_secret = str(random.randint(100000, 999999))
+
+@app.route('/sendotp/<string:username>')
+def sendotp(username):
+    otp_secret = str(random.randint(100000,999999))
+    user = User.query.filter_by(username=username).first()
+    email = user.email
+    user.otp_secret = otp_secret
+    db.session.commit()
+    username = user.username
+    send_authorization_email(email, otp_secret)
+    return redirect(url_for('otp_request', username=username))
 
 @app.route('/otp/<string:username>', methods=['GET', 'POST'])
 def otp_request(username):
-    email = User.query.filter_by(username=username).first().email
-    user = User.query.filter_by(username=username).first()
     form = OTPForm()
-    # n = 0
-    # list.append(otp_secret)
     if request.method == 'GET':
-        send_authorization_email(email, user.otp_secret)
         return render_template('two-factor-setup.html', form=form, username=username)
     elif request.method == 'POST':
         if form.validate_on_submit():
             otp = form.otp.data
-            print(otp)
-            print(user.otp_secret)
+            user = User.query.filter_by(username=username).first()
             if int(otp) == user.otp_secret:
-                # n = n + 1
-                login_user(User.query.filter_by(email=email).first())
+                login_user(user)
                 return redirect(url_for('home'))
             else:
-                flash('Invalid OTP. Check your email again')
-                user.otp_secret = random.randint(100000, 999999)
+                flash('Invalid OTP. Please log in again.')
                 logged_in = checklogin()
                 return redirect(url_for('login', logged_in=logged_in, form=LoginForm))
 
