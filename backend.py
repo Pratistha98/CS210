@@ -182,8 +182,8 @@ def add(pid):
         db.session.add(comment)
         db.session.commit()
         flash("Your comment has been added to the post")
-        return redirect(url_for("post", post_id=post.id))
-    return render_template("Blog.html", post=post)
+     #   return redirect(url_for("post", post_id=post.id))
+    #return render_template("Blog.html", post=post)
 
         return redirect(url_for(view_post(pid)))
     return render_template("Comment.html", form=form, pid=pid)
