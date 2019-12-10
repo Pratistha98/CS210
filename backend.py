@@ -21,7 +21,6 @@ from flask_mail import Mail, Message
 from datetime import datetime
 from time import time
 import random
-# import jwt
 
 appdir = os.path.abspath(os.path.dirname(__file__))
 app = Flask(__name__)
@@ -29,14 +28,12 @@ app.config['SECRET_KEY'] = "TvX<Z`%zPzNvt3M:Z]tE7dF*S}5o<pX$1@S6UvRy"
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///database.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["MFA_APP_NAME"] = "MFA-Demo"
-#For Email
 app.config['MAIL_SERVER'] = 'smtp.googlemail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USERNAME'] = 'blogcsc210@gmail.com'
 app.config['MAIL_PASSWORD'] = 'gmemhpokpol123'
 mail = Mail(app)
-#For Email
 Bootstrap(app)
 db = SQLAlchemy(app)
 login = LoginManager(app)
@@ -55,10 +52,11 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(120), unique=True, nullable=False)
     username = db.Column(db.String(15), unique=True, nullable = False)
     full_name = db.Column(db.String(128), nullable = False)
+    bio = db.Column(db.String(1024))
+    class_year = db.Column(db.String(10))
     password = db.Column(db.String(60), nullable=False)
     picture = db.Column(db.String(20), nullable=False, default='default.jpg')
     posts = db.relationship('Post', backref='author', lazy=True)
-
 
 class Post(db.Model):
     __tablename__ = "Posts"
@@ -93,6 +91,8 @@ class SignupForm(FlaskForm):
 class UpdateAccountForm(FlaskForm):
     username = StringField('Username', validators=[InputRequired(), Length(min=2, max=20)])
     full_name = StringField("Full Name", validators=[InputRequired(), Length(min=5, max=35)])
+    bio = TextAreaField("Bio", validators=[Length(max=1024)])
+    class_year = StringField("Class Year", validators=[Length(max=10)])
     email = StringField('Email', validators=[InputRequired(), Email()])
     picture = FileField('Update Profile Picture', validators=[FileAllowed(['jpg', 'png'])])
     submit = SubmitField('Update')
@@ -136,22 +136,18 @@ def checklogin():
 @app.route('/')
 def home():
     # resets the database:
-    # db.drop_all()
-    # db.create_all()
-    # db.session.commit()
+    db.drop_all()
+    db.create_all()
+    db.session.commit()
     logged_in = checklogin()
     posts = Post.query.all()
     return render_template("Landing.html", logged_in=logged_in, posts=posts)
 
-@app.route("/posts")
-def posts():
-    post = Post.query.all()
-    return render_template("posts.html")
-
 @app.route("/posts/<int:pid>")  # login required
 def view_post(pid):
     post = Post.query.filter_by(id=pid).first()
-    return render_template("Blog.html", post=post)
+    logged_in = checklogin()
+    return render_template("Blog.html", post=post, logged_in=logged_in)
 
 @app.route("/account", methods=['GET', 'POST'])
 @login_required
@@ -162,21 +158,29 @@ def account():
             picture_file = save_profile_picture(form.picture.data)
             current_user.picture = picture_file
         current_user.username = form.username.data
+        current_user.full_name = form.full_name.data
         current_user.email = form.email.data
+        current_user.bio = form.bio.data
+        current_user.class_year = form.class_year.data
         db.session.commit()
         flash('Your account has been updated!', 'success')
         return redirect(url_for('account'))
     elif request.method == 'GET':
         form.username.data = current_user.username
         form.email.data = current_user.email
+        form.full_name.data = current_user.full_name
+        form.bio.data = current_user.bio
+        form.class_year.data = current_user.class_year
     picture = url_for('static', filename='user_pictures/' + current_user.picture)
-    return render_template('account.html', title='Account', picture=picture, form=form)
+    logged_in = checklogin()
+    return render_template('EditProfile.html', picture=picture, form=form, logged_in=logged_in)
 
 @app.route('/login', methods=['GET', 'POST'])  # Check if this works properly
 def login(): 
     if current_user.is_authenticated:
         username = current_user.username
-        return render_template("LoggedIn.html", username = username)
+        logged_in = checklogin()
+        return render_template("LoggedIn.html", username = username, logged_in = logged_in)
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
@@ -245,15 +249,9 @@ def save_profile_picture(user_picture):
     _, f_ext = os.path.splitext(user_picture.filename)
     picture_fn = random_hex + f_ext
     picture_path = os.path.join(app.root_path, 'static/user_pictures', picture_fn)
-    output_size = (25, 25)
-    i = Image.open(user_picture)
-    i = ImageOps.fit(i, (25, 25), Image.ANTIALIAS)
-    i.thumbnail(output_size)
-    i.save(picture_path)
+    user_picture.save(picture_path)
     return picture_fn
 
-#----------------------------------------------------------------------------------------------
-#Forgot Password
 def send_reset_email(user):
     token = user.get_reset_token()
     msg = Message('Password Reset Request', sender='noreply@210project.com', recipients=[user.email])
@@ -293,9 +291,6 @@ def reset_token(token):
         return redirect(url_for('login'))
     return render_template('reset_password.html', form=form)
 
-#----------------------------------------------------------------------------------------------
-#2fa    
-
 def send_authorization_email(email, otp_secret):
     msg = Message('OTP for Login', sender='noreply@210project.com', recipients=[email])
     msg.body = '''Your 6 digit One Time Password is:''' + otp_secret
@@ -322,9 +317,6 @@ def otp_request(username):
                 logged_in = checklogin()
                 return redirect(url_for('login', form=form, logged_in=logged_in))
 
-
-#--------------------------------------------------------------------------------------------------
-
 @app.route('/blog')
 def Blog():
     logged_in = checklogin()   
@@ -339,7 +331,7 @@ def logout():
 @app.route('/profile') 
 def profile():
     logged_in = checklogin
-    return render_template("Profile.html", logged_in=logged_in)
+    return render_template("Profile.html", logged_in=logged_in, current_user=current_user)
 
 @app.route("/Editprofile")
 def edit():
@@ -349,45 +341,8 @@ def edit():
 def EditPost():
     return render_template("EditPost.html")
 
-"""!!!IDEA: annons can view first page of posts (clicking on a post still 
-   forces you to login). When the user clicks to access the second+ page, 
-   login will be required.
-   
-   *As of right now, we can leave it as login required and implement the 
-   rest later!!!"""
-
-"""!!!IDEA: use ajax to create an pop up where everything blurs in the background,
-   but there is a login form in focus in the middle if a user clicks on an
-   individual post or page 2 of /posts!!!"""
-
-
-'''
-Add user to the database
-'''
 class UserExists(ValueError):
     pass
 
-
-#--------------------------------------------------------------------------
-# Posts
-'''
-id = db.Column(db.Integer, primary_key=True, nullable = False, autoincrement = True)
-    title = db.Column(db.String(45), nullable = False)
-    body = db.Column(db.String(140))
-    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
-    user_id
-'''
-
 if __name__ == '__main__':
     app.run(debug=True, host='localhost', port=5000)
-
-"""!!!IDEA: annons can view first page of posts (clicking on a post still 
-   forces you to login). When the user clicks to access the second+ page, 
-   login will be required.
-   
-   *As of right now, we can leave it as login required and implement the 
-   rest later!!!"""
-
-"""!!!IDEA: use ajax to create an pop up where everything blurs in the background,
-   but there is a login form in focus in the middle if a user clicks on an
-   individual post or page 2 of /posts!!!"""
