@@ -273,7 +273,17 @@ def EditPost(pid):
         form.title.data = post.title
         form.description.data = post.description
     logged_in = checklogin()
-    return render_template("EditPost.html", form=form, logged_in=logged_in, post=post)  
+    return render_template("EditPost.html", form=form, logged_in=logged_in, post=post)
+
+@app.route("/delete_post/<int:pid>")
+def delete_post(pid):
+    post = Post.query.filter_by(id=pid).first()
+    comments = Comment.query.filter_by(post_id=pid)
+    db.session.delete(post)
+    for comment in comments:
+        db.session.delete(comment)
+    db.session.commit()
+    return redirect(url_for('home'))
 
 @app.route('/create', methods=['GET', 'POST'])
 @login_required
