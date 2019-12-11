@@ -279,9 +279,9 @@ def EditPost(pid):
 def delete_post(pid):
     post = Post.query.filter_by(id=pid).first()
     comments = Comment.query.filter_by(post_id=pid)
-    db.session.delete(post)
     for comment in comments:
         db.session.delete(comment)
+    db.session.delete(post)
     db.session.commit()
     return redirect(url_for('home'))
 
