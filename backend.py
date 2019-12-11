@@ -78,7 +78,7 @@ class Comment(db.Model):
     post_id = db.Column(db.Integer, db.ForeignKey('Posts.id'), nullable=False)
 
 class CommentForm(FlaskForm):
-    body = StringField("Body", validators=[InputRequired()])
+    body = StringField("Comment", validators=[InputRequired()])
     submit = SubmitField("Post")
 
 class PostForm(FlaskForm):
