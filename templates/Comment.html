@@ -10,7 +10,7 @@
                         {{ form.hidden_tag() }}
                         {{ form.csrf_token }}
                         {{wtf.form_field(form.body)}}
-                        {{wtf.form_field(form.submit)}}
+                        {{wtf.form_field(form.submit, class ="btn btn-light btn-block btn-lg", id = "startBtn")}}
                     </form>
                 </div>
             </div>
