@@ -163,12 +163,7 @@ def home():
     posts = Post.query.all()
     return render_template("Landing.html", logged_in=logged_in, posts=posts)
 
-# @app.route("/posts")
-# def posts():
-#     post = Post.query.all()
-#     return render_template("posts.html")
-
-@app.route("/posts/<int:pid>", methods=["GET", "POST"])  # login required
+@app.route("/posts/<int:pid>", methods=["GET", "POST"])
 def view_post(pid):
     post = Post.query.filter_by(id=pid).first()
     logged_in = checklogin()
@@ -212,7 +207,7 @@ def account():
     logged_in = checklogin()
     return render_template('EditProfile.html', picture=picture, form=form, logged_in=logged_in)
 
-@app.route('/login', methods=['GET', 'POST'])  # Check if this works properly
+@app.route('/login', methods=['GET', 'POST'])
 def login(): 
     if current_user.is_authenticated:
         username = current_user.username
@@ -227,17 +222,17 @@ def login():
         if user:
             if check_password_hash(user.password, form.password.data):
                 # login_user(user, remember=form.remember_me.data)
-                return redirect(url_for('sendotp', username=user.username))  # make sure redirect is correct
+                return redirect(url_for('sendotp', username=user.username))
         #error = 'Invalid credentials'
     logged_in = checklogin()   
-    return render_template("Login.html", form=form, logged_in=logged_in)  # Update with proper html file
+    return render_template("Login.html", form=form, logged_in=logged_in)
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     form = SignupForm()
     if form.validate_on_submit():
-        username = User.query.filter_by(username=form.username.data).first()  # make sure this checks for duplicate usernames
-        email = User.query.filter_by(email=form.email.data).first()  # make sure this checks for existing users properly
+        username = User.query.filter_by(username=form.username.data).first()
+        email = User.query.filter_by(email=form.email.data).first()
         if username:
             flash('Username Already Taken')
             return (redirect(url_for('signup')))
@@ -252,7 +247,7 @@ def signup():
         db.session.add(new_user)
         db.session.commit()
         session['username'] = new_user.username
-        return redirect(url_for('login'))    #redirecting for two factor authentication
+        return redirect(url_for('login'))
     logged_in = checklogin()   
     return render_template("SignUp.html", form=form, logged_in=logged_in)
 
@@ -300,7 +295,7 @@ def create():
         db.session.commit()
         logged_in = checklogin()
         flash("Posted Successfully", "success")
-        return redirect(url_for('home'))  # Create a new blog post  
+        return redirect(url_for('home'))
     logged_in = checklogin()
     return render_template("Create.html", form=form, logged_in=logged_in)
 
@@ -392,11 +387,6 @@ def otp_request(username):
                 logged_in = checklogin()
                 return redirect(url_for('login', logged_in=logged_in, form=LoginForm))
 
-@app.route('/blog')
-def Blog():
-    logged_in = checklogin()   
-    return render_template("Blog.html", logged_in=logged_in)  # Open the blog post 
-
 @app.route('/logout')
 def logout():
     logout_user()
@@ -407,13 +397,6 @@ def logout():
 def profile():
     logged_in = checklogin
     return render_template("Profile.html", logged_in=logged_in, current_user=current_user)
-
-@app.route("/Editprofile")
-def edit():
-    return render_template("EditProfile.html")
-
-class UserExists(ValueError):
-    pass
 
 if __name__ == '__main__':
     app.run(debug=True, host='localhost', port=5000)
