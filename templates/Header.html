@@ -36,7 +36,7 @@
         {% if logged_in %}
           <a class="nav-link" href="http://localhost:5000/">Home</a>
           <a class="nav-link" href="http://localhost:5000/logout">Logout</a>
-          <a class="nav-link" href="http://localhost:5000/profile"><img src="/static/user_pictures/{{current_user.picture}}" id="nav_img"></a>
+          <a class="nav-link" href="http://localhost:5000/profile"><img class ="logo1" src="/static/user_pictures/{{current_user.picture}}"></a>
         {% else %}
           <a class="nav-link" href="http://localhost:5000/">Home</a>
           <a class="nav-link" href="http://localhost:5000/login">Login</a> 
