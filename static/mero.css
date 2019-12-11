@@ -210,12 +210,15 @@ svg {
   transition:all 0.3s ease-in-out;
   opacity:1;
 }
+
 .card:hover .card-img,
 .card:focus .card-img {
   transform: scale(1.02);
   opacity:0.5;
 }
-
+.card { 
+  margin-bottom: 20px !important;
+}
 .card:hover .card-img-overlay{
     color:rgb(45, 55, 143);
     font-family: 'Pacifico', cursive;

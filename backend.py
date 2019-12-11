@@ -87,6 +87,12 @@ class PostForm(FlaskForm):
     picture = FileField('Picture', validators=[FileAllowed(['jpg', 'png'])])
     submit = SubmitField("Post")
 
+class UpdatePostForm(FlaskForm):
+    title = StringField("Title", validators=[InputRequired()])
+    description = TextAreaField("Description", validators=[InputRequired()])
+    picture = FileField('Picture', validators=[FileAllowed(['jpg', 'png'])])
+    submit = SubmitField("Update")
+
 class LoginForm(FlaskForm):
     username = StringField("Username", validators=[InputRequired(), Length(min=5, max=15)])
     password = PasswordField("Password", validators=[InputRequired(), Length(min=8, max=128)])
@@ -157,10 +163,10 @@ def home():
     posts = Post.query.all()
     return render_template("Landing.html", logged_in=logged_in, posts=posts)
 
-@app.route("/posts")
-def posts():
-    post = Post.query.all()
-    return render_template("posts.html")
+# @app.route("/posts")
+# def posts():
+#     post = Post.query.all()
+#     return render_template("posts.html")
 
 @app.route("/posts/<int:pid>", methods=["GET", "POST"])  # login required
 def view_post(pid):
@@ -248,7 +254,26 @@ def signup():
         session['username'] = new_user.username
         return redirect(url_for('login'))    #redirecting for two factor authentication
     logged_in = checklogin()   
-    return render_template("SignUp.html", form=form, logged_in=logged_in)  
+    return render_template("SignUp.html", form=form, logged_in=logged_in)
+
+@app.route("/EditPost/<int:pid>", methods=['GET', 'POST'])
+def EditPost(pid):
+    form = UpdatePostForm()
+    post = Post.query.filter_by(id=pid).first()
+    if form.validate_on_submit():
+        if form.picture.data:
+            picture_file = save_picture(form.picture.data)
+            post.picture = picture_file
+        post.title = form.title.data
+        post.description = form.description.data
+        db.session.commit()
+        flash('Your post has been updated!', 'success')
+        return redirect(url_for('view_post', pid=pid))
+    elif request.method == 'GET':
+        form.title.data = post.title
+        form.description.data = post.description
+    logged_in = checklogin()
+    return render_template("EditPost.html", form=form, logged_in=logged_in, post=post)  
 
 @app.route('/create', methods=['GET', 'POST'])
 @login_required
@@ -376,10 +401,6 @@ def profile():
 @app.route("/Editprofile")
 def edit():
     return render_template("EditProfile.html")
-
-@app.route("/EditPost")
-def EditPost():
-    return render_template("EditPost.html")
 
 class UserExists(ValueError):
     pass

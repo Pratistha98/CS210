@@ -5,22 +5,28 @@
         <body class="body-create">
             <div class="container">
                     <div id = "create">
-                            <form action ="/create" method ="post" id="blogform" enctype="multipart/form-data">
+                            <form action ="/EditPost/{{post.id}}" method ="Post" id="blogform" enctype="multipart/form-data">
+                                {{ form.hidden_tag() }}
+                                {{ form.csrf_token }} 
                                 <h1 class="header-login-signup" style="text-align: center"> Edit UR Blog</h1>
                                 <div class="form-group">
-                                    <label for="Title"> Title </label>
-                                    <input type="text" class="form-control" id="formGroupExampleInput" name ="Title" placeholder="Title">
+                                    <!-- <label for="Title"> Title </label>
+                                    <input type="text" class="form-control" id="formGroupExampleInput" name ="Title" placeholder="Title"> -->
+                                    {{wtf.form_field(form.title)}}
                                 </div>
                                 <div class="form-group">
-                                    <label for="Description">Description</label>
-                                    <textarea class="form-control" id="textarea" rows="30"></textarea>
+                                    <!-- <label for="Description">Description</label>
+                                    <textarea class="form-control" id="textarea" rows="30"></textarea> -->
+                                    {{wtf.form_field(form.description)}}
                                 </div>
                                 <div class = "form-group">
-                                    <label for="Image">Image</label>
-                                    <input type="text" class="form-control" id="formGroupExampleInput2" name = "image" placeholder="Image">
+                                    <!-- <label for="Image">Image</label>
+                                    <input type="text" class="form-control" id="formGroupExampleInput2" name = "image" placeholder="Image"> -->
+                                    {{form.picture}}
                                 </div>
                                 <div>
-                                    <button class ="btn btn-light btn-block btn-lg" id = "startBtn">Submit</button>
+                                    <!-- <button class ="btn btn-light btn-block btn-lg" id = "startBtn">Submit</button> -->
+                                    {{wtf.form_field(form.submit, class ="btn btn-light btn-block btn-lg", id = "startBtn")}}
                                 </div>
                             </form>
                     </div>
