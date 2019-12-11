@@ -17,18 +17,22 @@
 							<p>{{ post.description }}</p>
 							<div class = "align-self-end ml-auto">
 							<figure class="figure">
-								<!-- <a href="#"><img src="https://img.icons8.com/material-sharp/30/000000/edit.png" hspace="15" style="float:right"> </a>
-								<figcaption class="figure-caption text-center"> Edit</figcaption>
-							  </figure>
-	
-							  <figure class="figure">
-								<a href="#"> <img src="https://img.icons8.com/material-rounded/30/000000/filled-trash.png"></a>
-								<figcaption class="figure-caption text-center"> Delete</figcaption>
-							  </figure> 
-							  <figure class="figure">
-									<a href="#"><img src="https://img.icons8.com/material-rounded/30/000000/star.png" hspace="20"> </a>
-									<figcaption class="figure-caption text-center">Like</figcaption>
-								  </figure> -->
+								{% if (post.author_of_post==current_user) %}
+
+									<a href="#"><img src="https://img.icons8.com/material-sharp/30/000000/edit.png" hspace="15" style="float:right"> </a>
+									<figcaption class="figure-caption text-center"> Edit</figcaption>
+								</figure>
+		
+								<figure class="figure">
+									<a href="#"> <img src="https://img.icons8.com/material-rounded/30/000000/filled-trash.png"></a>
+									<figcaption class="figure-caption text-center"> Delete</figcaption>
+								</figure> 
+								<!-- <figure class="figure">
+										<a href="#"><img src="https://img.icons8.com/material-rounded/30/000000/star.png" hspace="20"> </a>
+										<figcaption class="figure-caption text-center">Like</figcaption>
+									</figure> -->
+								
+								{% endif %}
 
 								  <figure class="figure">
 									<a href="/comment/{{pid}}"><img src="https://img.icons8.com/material-rounded/30/000000/comments.png" hspace="20"> </a>

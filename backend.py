@@ -166,7 +166,7 @@ def posts():
 def view_post(pid):
     post = Post.query.filter_by(id=pid).first()
     logged_in = checklogin()
-    return render_template("Blog.html", post=post, logged_in=logged_in, pid=pid)
+    return render_template("Blog.html", post=post, logged_in=logged_in, pid=pid, current_user=current_user)
 
 @app.route("/comment/<int:pid>", methods=["GET", "POST"])
 def add(pid):
@@ -179,19 +179,6 @@ def add(pid):
         flash("Your comment has been added to the post")
         return redirect(url_for('view_post', pid=pid))
     return render_template("Comment.html", form=form, pid=pid)
-
-# @app.route("/post/<int:post_id>/comment", methods=["GET", "POST"])
-# @login_required
-# def comment_post(post_id):
-#     post = Post.query.get_or_404(post_id)
-#     form = CommentForm()
-#     if form.validate_on_submit():
-#         comment = Comment(body=form.body.data, article=post.id)
-#         db.session.add(comment)
-#         db.session.commit()
-#         flash("Your comment has been added to the post")
-#         return redirect(url_for("post", post_id=post.id))
-#     return render_template("comment_post.html", title="Comment Post", form=form)
 
 @app.route("/account", methods=['GET', 'POST'])
 @login_required
