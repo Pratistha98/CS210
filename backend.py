@@ -4,7 +4,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, ValidationError, TextAreaField
 from flask_wtf.file import FileField, FileAllowed, FileRequired
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, ValidationError
-from wtforms.validators import InputRequired, Email, Length, Required, EqualTo, DataRequired
+from wtforms.validators import InputRequired, Email, Length, Required, EqualTo
 from flask_sqlalchemy import SQLAlchemy
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -57,7 +57,8 @@ class User(db.Model, UserMixin):
     password = db.Column(db.String(60), nullable=False)
     otp_secret = db.Column(db.Integer, nullable=True)
     picture = db.Column(db.String(20), nullable=False, default='default.jpg')
-    posts = db.relationship('Post', backref='author', lazy=True)
+    posts = db.relationship('Post', backref='author_of_post', lazy=True)
+    comments = db.relationship('Comment', backref='author_of_comment', lazy=True)
 
 class Post(db.Model):
     __tablename__ = "Posts"
@@ -65,20 +66,19 @@ class Post(db.Model):
     title = db.Column(db.String(50), nullable = False)
     description = db.Column(db.String(128))
     time = db.Column(db.DateTime)
-    user_id = db.Column(db.Integer, db.ForeignKey('Users.id'), nullable=False)
     picture = db.Column(db.String(50), nullable = True)
-    comments = db.relationship("Comment", backref="comment", lazy = True)
-
+    user_id = db.Column(db.Integer, db.ForeignKey('Users.id'), nullable=False)
+    comments = db.relationship('Comment', backref='post_of_comment', lazy=True)
 
 class Comment(db.Model):
     __tablename__ = "Comments"
     id = db.Column(db.Integer, primary_key=True)
     text = db.Column(db.String(400))
-    # author = db.Column(db.String(32))
-    post_id = db.Column(db.Integer, db.ForeignKey('Posts.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('Users.id'), nullable=False)
+    post_id = db.Column(db.Integer, db.ForeignKey('Posts.id'), nullable=False)
 
 class CommentForm(FlaskForm):
-    body = StringField("Body", validators=[DataRequired()])
+    body = StringField("Body", validators=[InputRequired()])
     submit = SubmitField("Post")
 
 class PostForm(FlaskForm):
@@ -173,12 +173,11 @@ def add(pid):
     form = CommentForm()
     post = Post.query.filter_by(id=pid).first()
     if form.validate_on_submit():
-        print ("hit")
-        comment = Comment(text=form.body.data, post_id=post.id)
+        comment = Comment(text=form.body.data, user_id=current_user.id, post_id=pid)
         db.session.add(comment)
         db.session.commit()
         flash("Your comment has been added to the post")
-        return redirect(url_for(view_post(pid)))
+        return redirect(url_for('view_post', pid=pid))
     return render_template("Comment.html", form=form, pid=pid)
 
 # @app.route("/post/<int:post_id>/comment", methods=["GET", "POST"])
@@ -219,7 +218,6 @@ def account():
     picture = url_for('static', filename='user_pictures/' + current_user.picture)
     logged_in = checklogin()
     return render_template('EditProfile.html', picture=picture, form=form, logged_in=logged_in)
-
 
 @app.route('/login', methods=['GET', 'POST'])  # Check if this works properly
 def login(): 

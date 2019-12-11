@@ -5,13 +5,13 @@
     <body class="body-login">
         <div class="container">
             <div class ="container">
-                {{form.hidden_tag()}}
-                {{ form.csrf_token }}
                 <div class="jumbotron">
-                        <form action="/posts/{{pid}}" method ="Post">
-                            {{wtf.form_field(form.body)}}
-                            {{wtf.form_field(form.submit)}}
-                        </form>
+                    <form action="/comment/{{pid}}" method ="Post">
+                        {{ form.hidden_tag() }}
+                        {{ form.csrf_token }}
+                        {{wtf.form_field(form.body)}}
+                        {{wtf.form_field(form.submit)}}
+                    </form>
                 </div>
             </div>
         </div>  
